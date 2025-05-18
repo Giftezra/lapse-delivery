@@ -26,7 +26,6 @@ const LastTripComponent = ({
 
   return (
     <Pressable
-      onPress={handlePress}
       style={[styles.mainContainer, !isExpanded && styles.collapsedContainer]}
     >
       {isExpanded ? (
@@ -36,7 +35,7 @@ const LastTripComponent = ({
               <MaterialCommunityIcons name="eye" size={24} color="black" />
             </Pressable>
 
-            <View style={styles.amountPill}>
+            <Pressable style={styles.amountPill} onPress={handlePress}>
               {isHidePressed ? (
                 <Text style={styles.hiddenAmount}>****</Text>
               ) : (
@@ -45,7 +44,7 @@ const LastTripComponent = ({
                   {amount}
                 </Text>
               )}
-            </View>
+            </Pressable>
 
             <Pressable>
               <MaterialCommunityIcons
@@ -71,12 +70,12 @@ const LastTripComponent = ({
           </View>
         </>
       ) : (
-        <View style={styles.collapsedAmountPill}>
+        <Pressable style={styles.collapsedAmountPill} onPress={handlePress}>
           <Text style={styles.amount}>
             <Text style={styles.currencySymbol}>{currency}</Text>
             {amount}
           </Text>
-        </View>
+        </Pressable>
       )}
     </Pressable>
   );

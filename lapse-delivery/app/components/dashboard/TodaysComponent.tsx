@@ -24,7 +24,6 @@ const TodaysComponent = ({
 
   return (
     <Pressable
-      onPress={handlePress}
       style={[styles.container, !isExpanded && styles.collapsedContainer]}
     >
       {isExpanded ? (
@@ -34,7 +33,7 @@ const TodaysComponent = ({
               <MaterialCommunityIcons name="eye" size={24} color="black" />
             </Pressable>
 
-            <View style={styles.amountContainer}>
+            <Pressable style={styles.amountContainer} onPress={handlePress}>
               {isHidePressed ? (
                 <Text style={styles.amount}>****</Text>
               ) : (
@@ -43,7 +42,7 @@ const TodaysComponent = ({
                   {amount.toFixed(2)}
                 </Text>
               )}
-            </View>
+            </Pressable>
 
             <Pressable disabled={true}>
               <MaterialCommunityIcons
@@ -67,12 +66,12 @@ const TodaysComponent = ({
           </View>
         </>
       ) : (
-        <View style={styles.collapsedAmountPill}>
+        <Pressable style={styles.collapsedAmountPill} onPress={handlePress}>
           <Text style={styles.amount}>
             {currency}
             {amount.toFixed(2)}
           </Text>
-        </View>
+        </Pressable>
       )}
     </Pressable>
   );
