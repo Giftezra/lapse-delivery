@@ -10,8 +10,8 @@ const ScreensLayout = () => {
         <Stack.Screen name="DashboardScreen" options={{ headerShown: false }} />
         <Stack.Screen name="EarningScreen" options={{ headerShown: false }} />
         <Stack.Screen name="WalletScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="AccountScreen" options={{ headerShown: false }} />
         <Stack.Screen name="BalanceScreen" options={{ headerShown: false }} />
+        <Stack.Screen name="accounts" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

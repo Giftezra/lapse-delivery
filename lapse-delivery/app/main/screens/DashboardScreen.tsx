@@ -107,8 +107,7 @@ const DashboardScreen = () => {
         </View>
 
         {/* This is the main view that holds the backround display */}
-        <View>
-        </View>
+        <View></View>
 
         {/* bottom sheet with integrated buttons */}
         <BottomSheet
@@ -202,9 +201,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    zIndex: 2000,
   },
   overlayMenuContainer: {
-    width: 500,
+    width: 300,
     height: "100%",
     backgroundColor: "white",
     elevation: 5,
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   overlayEarningsSection: {
     position: "absolute",
-    top: 5,
+    top: 60,
     borderRadius: 20,
     alignSelf: "center",
     width: Dimensions.get("window").width * 0.95,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     zIndex: 1000,
-    minHeight: 100,
+    pointerEvents: "box-none",
   },
   map: {
     flex: 1,

@@ -12,9 +12,11 @@ import { router } from "expo-router";
 const AccountItemComponent = ({
   vehicle,
   type,
+  onPress,
 }: {
   vehicle?: any;
   type?: string;
+  onPress?: () => void;
 }) => {
   /* Get the title of the account item given the type passed */
   const getTitle = () => {
@@ -44,7 +46,7 @@ const AccountItemComponent = ({
 
   return (
     <TouchableOpacity
-      onPress={() => router.push(vehicle)}
+      onPress={onPress}
       style={styles.maincontainer}
     >
       <MaterialCommunityIcons

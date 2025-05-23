@@ -81,7 +81,7 @@ export default TodaysComponent;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: "red",
     padding: 20,
     borderRadius: 16,
     width: "100%",
@@ -97,7 +97,12 @@ const styles = StyleSheet.create({
   collapsedContainer: {
     padding: 0,
     backgroundColor: "transparent",
+    height: "auto",
+    minHeight: 0,
     shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
     elevation: 0,
   },
   topSection: {
@@ -115,7 +120,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   collapsedAmountPill: {
-    marginTop: 10,
     backgroundColor: "black",
     paddingHorizontal: 20,
     paddingVertical: 10,

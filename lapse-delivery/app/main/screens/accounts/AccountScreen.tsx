@@ -28,6 +28,17 @@ const AccountScreen = () => {
     "privacy",
     "app settings",
   ];
+  /* Manage the routing of the account items given the type passed */
+  const handleRouting = (type: string) => {
+    switch (type) {
+      case "manage account":
+        router.push('/main/screens/accounts/AccountManageScreen');
+        break;
+      default:
+        // router.push(`/main/screens/accounts/${type}`);
+        break;
+    }
+  };
 
   return (
     <View style={styles.maincontainer}>
@@ -78,6 +89,7 @@ const AccountScreen = () => {
               key={type}
               type={type}
               vehicle={type === "vehicle" ? "bicycle" : undefined}
+              onPress={() => handleRouting(type)}
             />
           ))}
           <View style={styles.logoutcontainer}>

@@ -9,5 +9,11 @@ export interface LastDeliveryStatus {
   time?: string;
   description?: string;
 }
+/* Interface defines the new delivery alert that would be displayed on the dashboard when the user has a new delivery. */
+export interface NewDeliveryAlert {
+  id:string;
+  amount:number;
+  
+}
 
 

@@ -69,7 +69,7 @@ const SideComponent = ({
           children="Account"
           variant="h2"
           onPress={() => {
-            router.push("/main/screens/AccountScreen");
+            router.push("/main/screens/accounts/AccountScreen");
             setIsSideComponentVisible(false);
           }}
         />
