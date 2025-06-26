@@ -11,7 +11,11 @@ const deliveryOptions: DeliveryOptionsChoicesInterface[] = [
     description: "Bicycle with valid food delivery insurance",
     age: 18,
     vehicle: "Bike",
-    onPress: () => router.push("delivery/bike" as any),
+    onPress: () =>
+      router.push({
+        pathname: "/main/onboard/OnboardingScreen",
+        params: { vehicleType: "bike" },
+      } as any),
   },
   {
     title: "Deliver with Lapse by motorbike",
@@ -20,7 +24,11 @@ const deliveryOptions: DeliveryOptionsChoicesInterface[] = [
     vehicle: "Motorcycle",
     license: "Valid food delivery license",
     expierience: "1 year",
-    onPress: () => router.push("delivery/motorcycle" as any),
+    onPress: () =>
+      router.push({
+        pathname: "/main/onboard/OnboardingScreen",
+        params: { vehicleType: "motorcycle" },
+      } as any),
   },
   {
     title: "Deliver with Lapse by car",
@@ -29,7 +37,11 @@ const deliveryOptions: DeliveryOptionsChoicesInterface[] = [
     vehicle: "Car",
     license: "Valid food delivery license and driver's license",
     expierience: "1 year",
-    onPress: () => router.push("delivery/car" as any),
+    onPress: () =>
+      router.push({
+        pathname: "/main/onboard/OnboardingScreen",
+        params: { vehicleType: "car" },
+      } as any),
   },
 ];
 
@@ -38,6 +50,12 @@ const DeliveryChoiceScreen = () => {
   const [selectedOptions, setSelectedOptions] =
     useState<DeliveryOptionsChoicesInterface>();
 
+  const handleContinue = (event: any) => {
+    if (selectedOptions?.onPress) {
+      selectedOptions.onPress(event);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -45,23 +63,20 @@ const DeliveryChoiceScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         {deliveryOptions.map((option, index) => (
-          <DeliveryChoicesCard
-            key={index}
-            {...option}
-            selected={selectedOptions?.title === option.title}
-            onPress={() => setSelectedOptions(option)}
-          />
+          <View key={index} style={styles.itemWrapper}>
+            <DeliveryChoicesCard
+              {...option}
+              selected={selectedOptions?.title === option.title}
+              onPress={() => setSelectedOptions(option)}
+            />
+          </View>
         ))}
       </ScrollView>
       <View style={styles.buttonContainer}>
         <StyledButton
           title="Continue"
           variant="primary"
-          onPress={(event) => {
-            if (selectedOptions?.onPress) {
-              selectedOptions.onPress(event);
-            }
-          }}
+          onPress={handleContinue}
           disabled={!selectedOptions}
         />
       </View>
@@ -69,7 +84,7 @@ const DeliveryChoiceScreen = () => {
         <StyledButton
           title="Dashboard"
           variant="secondary"
-          onPress={() => router.replace("/main/screens/DashboardScreen")}
+          onPress={() => router.replace("/main/screens/DashboardScreen" as any)}
         />
       </View>
     </View>
@@ -99,5 +114,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     padding: 16,
+  },
+  itemWrapper: {
+    marginHorizontal: 5,
+    marginVertical: 5,
   },
 });

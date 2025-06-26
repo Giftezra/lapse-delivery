@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import StyledText from "../helpers/others/StyledText";
 
 interface LastTripComponentProps extends LastDeliveryStatus {
-  onHidePressed: () => void;
+  onHelpPressed: () => void;
   onSeeEarningsActivity?: () => void;
 }
 
@@ -14,7 +14,7 @@ const LastTripComponent = ({
   currency,
   day,
   time,
-  onHidePressed,
+  onHelpPressed,
   onSeeEarningsActivity,
 }: LastTripComponentProps) => {
   const [isHidePressed, setIsHidePressed] = useState(false);
@@ -46,7 +46,12 @@ const LastTripComponent = ({
               )}
             </Pressable>
 
-            <Pressable>
+            <Pressable
+              onPress={() => {
+                onHelpPressed?.();
+                setIsExpanded(false);
+              }}
+            >
               <MaterialCommunityIcons
                 name="help-circle"
                 size={24}
@@ -64,7 +69,12 @@ const LastTripComponent = ({
 
             <Text style={styles.deliveryText}>Delivery</Text>
 
-            <Pressable onPress={onSeeEarningsActivity}>
+            <Pressable
+              onPress={() => {
+                onSeeEarningsActivity?.();
+                setIsExpanded(false);
+              }}
+            >
               <Text style={styles.seeEarningsText}>SEE EARNINGS ACTIVITY</Text>
             </Pressable>
           </View>
@@ -86,9 +96,17 @@ export default LastTripComponent;
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: "white",
-    borderRadius: 20,
     padding: 20,
     width: "100%",
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
   collapsedContainer: {
     padding: 0,
@@ -103,10 +121,10 @@ const styles = StyleSheet.create({
   },
   collapsedAmountPill: {
     backgroundColor: "black",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 25,
+    paddingVertical: 12,
     borderRadius: 50,
-    minWidth: 120,
+    minWidth: 140,
     alignItems: "center",
     alignSelf: "center",
   },
@@ -114,14 +132,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   amountPill: {
     backgroundColor: "black",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 25,
+    paddingVertical: 12,
     borderRadius: 50,
-    minWidth: 120,
+    minWidth: 140,
     alignItems: "center",
   },
   amount: {
@@ -131,7 +149,7 @@ const styles = StyleSheet.create({
   },
   currencySymbol: {
     fontSize: 20,
-    marginRight: 2,
+    marginRight: 4,
   },
   hiddenAmount: {
     color: "white",
@@ -139,28 +157,31 @@ const styles = StyleSheet.create({
   },
   contentSection: {
     alignItems: "center",
-    gap: 10,
+    gap: 12,
   },
   lastTripText: {
     fontSize: 16,
     fontWeight: "500",
     color: "#666",
     textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   dateText: {
     fontSize: 24,
-    fontWeight: "500",
+    fontWeight: "600",
     color: "#000",
+    textAlign: "center",
   },
   deliveryText: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#666",
-    marginBottom: 10,
+    marginBottom: 5,
   },
   seeEarningsText: {
     color: "#0066FF",
     fontSize: 16,
-    fontWeight: "500",
-    marginTop: 10,
+    fontWeight: "600",
+    marginTop: 15,
+    letterSpacing: 0.5,
   },
 });

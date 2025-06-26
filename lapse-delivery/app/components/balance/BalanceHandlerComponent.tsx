@@ -36,7 +36,7 @@ const BalanceHandlerComponent = ({
           }}
         >
           <StyledText
-            variant="h4"
+            variant="labelMedium"
             children="Balance"
             style={{ fontSize: 16, fontWeight: "600" }}
           />
@@ -51,7 +51,7 @@ const BalanceHandlerComponent = ({
           }}
         >
           <StyledText
-            variant="h4"
+            variant="labelMedium"
             children={`${currency}${balance.toFixed(2)}`}
             style={{ fontSize: 16, fontWeight: "600" }}
           />
@@ -70,8 +70,8 @@ const BalanceHandlerComponent = ({
           },
         ]}
       >
-        <StyledText variant="h2" children={currency} />
-        <StyledText variant="h1" children={balance.toFixed(2)} />
+        <StyledText variant="titleLarge" children={currency} />
+        <StyledText variant="titleMedium" children={balance.toFixed(2)} />
       </Animated.View>
     </View>
   );

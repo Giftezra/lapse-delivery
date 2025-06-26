@@ -1,5 +1,35 @@
 services:
-  client:
+  delivery_server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./server/delivery:/app
+      - delivery_server_static:/app/staticfiles
+    environment:
+      - DEBUG=0
+      - DJANGO_SETTINGS_MODULE=delivery.settings
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,delivery-server
+      - REDIS_HOST=delivery_redis
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@lapse_rabbitmq:5672/delivery
+      - CELERY_RESULT_BACKEND=redis://delivery_redis:6379/1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+
+  # React/Expo Frontend
+  delivery_client:
     build:
       context: ./lapse-delivery
       dockerfile: Dockerfile
@@ -11,36 +41,69 @@ services:
       - ./lapse-delivery:/app
       - /app/node_modules
     environment:
+      - EXPO_PUBLIC_API_URL=http://delivery_server:8000
       - NODE_ENV=development
     depends_on:
-      - server
+      delivery_server:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
 
-  server:
+  # Celery Worker (Specialized for delivery)
+  delivery_celery_worker:
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     volumes:
       - ./server/delivery:/app
     environment:
-      - DEBUG=1
       - DJANGO_SETTINGS_MODULE=delivery.settings
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+      - CELERY_BROKER_URL=amqp://guest:guest@lapse_rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://delivery_redis:6379/0
+      - CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP=True
+      - C_FORCE_ROOT=0
+    user: "1000:1000"
+    command: celery -A delivery worker --loglevel=info
     depends_on:
-      - rabbitmq
+      delivery_redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
 
-  rabbitmq:
-    restart: unless-stopped
-    image: rabbitmq:3-management
+  # Dedicated Redis for delivery
+  delivery_redis:
+    image: redis:7-alpine
     ports:
-      - "5673:5672" # Standard AMQP port
-      - "15673:15672" # Management UI
+      - "6380:6379"
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      - delivery_redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
 
 volumes:
-  rabbitmq_data:
+  delivery_redis_data:
+  delivery_server_static:
+
+networks:
+  lapse_network:
+    external: true

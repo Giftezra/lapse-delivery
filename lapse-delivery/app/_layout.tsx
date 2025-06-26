@@ -2,33 +2,25 @@ import { Stack } from "expo-router";
 import { Dimensions, View, Text, Platform, StyleSheet } from "react-native";
 import LocalizationProvider from "./context/LocalizationProvider";
 import ThemeProvider from "./context/ThemeProvider";
+import { PaperProvider } from "react-native-paper";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function RootLayout() {
   const width = Dimensions.get("window").width;
-  if (width <= 764 && Platform.OS !== "web") {
-    return (
-      <ThemeProvider>
-        <LocalizationProvider>
-          <Stack screenOptions={{ headerShown: false }} >
-            <Stack.Screen name="main" options={{ headerShown: false }} />
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          </Stack>
-        </LocalizationProvider>
-      </ThemeProvider>
-    );
-  } else {
-    return (
-      <ThemeProvider>
-        <View style={styles.container}>
-          <Text style={styles.title}>Mobile Only Application</Text>
-          <Text style={styles.message}>
-          This application is designed for mobile devices only. Please access it
-            using your smartphone.
-          </Text>
-        </View>
-      </ThemeProvider>
-    );
-  }
+  return (
+    <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
+      <PaperProvider>
+        <ThemeProvider>
+          <LocalizationProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="main" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+            </Stack>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </PaperProvider>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

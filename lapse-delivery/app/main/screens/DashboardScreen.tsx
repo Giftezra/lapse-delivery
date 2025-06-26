@@ -17,6 +17,7 @@ import BottomSheetHeader from "@/app/components/dashboard/BottomSheetHeader";
 import TodaysComponent from "@/app/components/dashboard/TodaysComponent";
 import dashboardUtils from "@/app/utils/dashboard";
 import { AppleMaps, GoogleMaps } from "expo-maps";
+import { router } from "expo-router";
 
 const DashboardScreen = () => {
   const [isSideComponentVisible, setIsSideComponentVisible] = useState(false);
@@ -25,8 +26,10 @@ const DashboardScreen = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
+  const screenWidth = Dimensions.get("window").width;
+
   // Create  a snap point for the bottom sheet
-  const snapPoints = useMemo(() => ["26%", "75%", "100%"], []);
+  const snapPoints = useMemo(() => ["10%", "50%", "75%"], []);
 
   return (
     <Pressable
@@ -52,37 +55,41 @@ const DashboardScreen = () => {
               dashboardUtils.handleScroll(event, setActiveIndex)
             }
             scrollEventThrottle={16}
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollViewContent}
           >
-            <View
-              style={[
-                styles.page,
-                { width: Dimensions.get("window").width * 0.95 },
-              ]}
-            >
-              <LastTripComponent
-                amount={4.38}
-                currency={"€"}
-                day={"May 17,"}
-                time={"10:00 AM"}
-                onHidePressed={() => {}}
-              />
+            <View style={[styles.page, { width: screenWidth }]}>
+              <View style={styles.componentContainer}>
+                <LastTripComponent
+                  amount={4.38}
+                  currency={"€"}
+                  day={"May 17,"}
+                  time={"10:00 AM"}
+                  onHelpPressed={() => {
+                    router.push("/main/screens/help/HelpScreen");
+                  }}
+                  onSeeEarningsActivity={() => {
+                    router.push("/main/screens/earnings/EarningScreen");
+                  }}
+                />
+              </View>
             </View>
-            <View
-              style={[
-                styles.page,
-                { width: Dimensions.get("window").width * 0.95 },
-              ]}
-            >
-              <TodaysComponent
-                amount={25.5}
-                currency={"€"}
-                trips={3}
-                onSeeWeeklySummary={() => {}}
-              />
+            <View style={[styles.page, { width: screenWidth }]}>
+              <View style={styles.componentContainer}>
+                <TodaysComponent
+                  amount={25.5}
+                  currency={"€"}
+                  trips={3}
+                  onSeeWeeklySummary={() => {
+                    router.push("/main/screens/earnings/EarningDetailsScreen");
+                  }}
+                />
+              </View>
             </View>
           </ScrollView>
 
-          {/* <View style={styles.paginationDots}>
+          {/* Display the pagination dots */}
+          <View style={styles.paginationDots}>
             <Pressable
               onPress={() =>
                 dashboardUtils.handleDotPress(0, scrollViewRef, setActiveIndex)
@@ -103,13 +110,52 @@ const DashboardScreen = () => {
                 style={[styles.dot, activeIndex === 1 && styles.activeDot]}
               />
             </Pressable>
-          </View> */}
+          </View>
         </View>
 
-        {/* This is the main view that holds the backround display */}
-        <View></View>
+        {/* Main map view */}
+        <View style={styles.mapContainer}></View>
 
-        {/* bottom sheet with integrated buttons */}
+        {/* Floating action buttons */}
+        <View style={styles.floatingButtonsContainer}>
+          <Pressable
+            style={styles.overlayShieldSheet}
+            onPress={() => bottomRef.current?.expand()}
+          >
+            <MaterialIcons name="shield" size={25} color="#0e9ee6" />
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.overlayGoOnlineButton,
+              isOnline && styles.overlayGoOfflineButton,
+            ]}
+            onPress={() => setIsOnline(!isOnline)}
+          >
+            <View style={{ alignItems: "center" }}>
+              {isOnline ? (
+                <View style={styles.innerGoOfflineButton}>
+                  <MaterialIcons name="stop" size={30} color="white" />
+                </View>
+              ) : (
+                <MaterialIcons
+                  name="power-settings-new"
+                  size={30}
+                  color="white"
+                />
+              )}
+            </View>
+          </Pressable>
+
+          <Pressable
+            style={styles.overlayAnalyticsSection}
+            onPress={() => bottomRef.current?.expand()}
+          >
+            <MaterialIcons name="analytics" size={25} color="#0e9ee6" />
+          </Pressable>
+        </View>
+
+        {/* Bottom sheet */}
         <BottomSheet
           ref={bottomRef}
           snapPoints={snapPoints}
@@ -121,53 +167,12 @@ const DashboardScreen = () => {
           enableHandlePanningGesture
         >
           <BottomSheetView>
-            {/* Action buttons moved inside BottomSheet */}
-            <View style={styles.bottomSheetButtons}>
-              <Pressable
-                style={styles.overlayShieldSheet}
-                onPress={() => bottomRef.current?.expand()}
-              >
-                <MaterialIcons name="shield" size={25} color="#0e9ee6" />
-              </Pressable>
-
-              <Pressable
-                style={styles.overlayGoOnlineButton}
-                onPress={() => setIsOnline(!isOnline)}
-              >
-                <View style={{ alignItems: "center" }}>
-                  {isOnline ? (
-                    <MaterialIcons name="power-off" size={30} color="white" />
-                  ) : (
-                    <MaterialIcons
-                      name="power-settings-new"
-                      size={30}
-                      color="white"
-                    />
-                  )}
-                </View>
-              </Pressable>
-
-              <Pressable
-                style={styles.overlayAnalyticsSection}
-                onPress={() => bottomRef.current?.expand()}
-              >
-                <MaterialIcons name="analytics" size={25} color="#0e9ee6" />
-              </Pressable>
-            </View>
             <BottomSheetHeader onlineStatus={isOnline} />
-
-            <View style={styles.goofflineButtonContainer}>
-              <Pressable style={styles.goofflineButton}>
-                <View style={styles.innerGoOfflineButton}>
-                  <MaterialIcons name="stop" size={30} color="white" />
-                </View>
-              </Pressable>
-            </View>
           </BottomSheetView>
         </BottomSheet>
       </GestureHandlerRootView>
 
-      {/* Display the side comopnent when the user clicks on the overlay menu button */}
+      {/* Side menu component */}
       {isSideComponentVisible && (
         <View style={styles.overlayMenuContainer}>
           <SideComponent
@@ -189,9 +194,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+  mapContainer: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
   overlayMenuButtons: {
     position: "absolute",
-    top: 15,
+    top: 5,
     left: 15,
     borderRadius: 40,
     padding: 8,
@@ -212,6 +221,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  },
+  floatingButtonsContainer: {
+    position: "absolute",
+    bottom: "30%",
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    zIndex: 1000,
   },
   overlayShieldSheet: {
     width: 50,
@@ -239,6 +259,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
+  overlayGoOfflineButton: {
+    backgroundColor: "red",
+  },
   overlayAnalyticsSection: {
     width: 50,
     height: 50,
@@ -254,36 +277,19 @@ const styles = StyleSheet.create({
   },
   overlayEarningsSection: {
     position: "absolute",
-    top: 60,
-    borderRadius: 20,
-    alignSelf: "center",
-    width: Dimensions.get("window").width * 0.95,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    top: 40,
+    width: "100%",
+    alignItems: "center",
     zIndex: 1000,
     pointerEvents: "box-none",
   },
-  map: {
-    flex: 1,
-  },
-  bottomSheetButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  stopButtonContainer: {
+    position: "absolute",
+    bottom: "15%",
+    left: 0,
+    right: 0,
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  goofflineButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    backgroundColor: "white",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
+    zIndex: 1000,
   },
   goofflineButton: {
     borderRadius: 40,
@@ -298,29 +304,39 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     borderColor: "gray",
   },
+  scrollView: {
+    width: "100%",
+  },
+  scrollViewContent: {
+    alignItems: "center",
+  },
   page: {
-    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  componentContainer: {
+    width: "85%",
+    alignItems: "center",
   },
   paginationDots: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    marginTop: 10,
   },
   dotContainer: {
-    width: 20,
-    height: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 5,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: "#E5E5E5",
-    marginHorizontal: 5,
+    marginHorizontal: 4,
   },
   activeDot: {
     backgroundColor: "#0e9ee6",
+    width: 8,
+    height: 8,
   },
 });

@@ -2,21 +2,51 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import StyledText from "@/app/components/helpers/others/StyledText";
+import { OnboardingProvider } from "@/app/contexts/OnboardingContext";
 
 const MainOnboardLayout = () => {
   return (
-    <GestureHandlerRootView>
-      <View style={styles.headerContainer}>
-        <Text>Lapse</Text>
-        <Pressable style={styles.helpButton}>
-          <Text>Help</Text>
-        </Pressable>
-      </View>
-      <Stack>
-        <Stack.Screen name="WhereToDeliver" options={{headerShown: false}} />
-        <Stack.Screen name="DeliveryChoiceScreen" options={{headerShown: false}} />
-      </Stack>
-    </GestureHandlerRootView>
+    <OnboardingProvider>
+      <GestureHandlerRootView>
+        <View style={styles.headerContainer}>
+          <StyledText variant="titleLarge">Lapse</StyledText>
+          <Pressable style={styles.helpButton}>
+            <StyledText variant="titleMedium">Help</StyledText>
+          </Pressable>
+        </View>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+            name="WhereToDeliver"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="DeliveryChoiceScreen"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OnboardingScreen"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="PersonalInformationScreen"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="BankInformationScreen"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="IdentityVerificationScreen"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="VehicleInformationScreen"
+            options={{ headerShown: false }}
+          />
+        </Stack>
+      </GestureHandlerRootView>
+    </OnboardingProvider>
   );
 };
 
@@ -27,26 +57,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "#fff",
-    shadowOffset: { width: 0, height: 2 },
-    shadowColor: "rgba(4, 4, 4, 0.62)",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-
-  },  
-  helpButton:{
-    backgroundColor: "rgba(28, 25, 196, 0.62)",
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowRadius: 4,
-    shadowColor: "rgba(4, 4, 4, 0.62)",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    elevation: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  helpButton: {
+    padding: 8,
   },
 });

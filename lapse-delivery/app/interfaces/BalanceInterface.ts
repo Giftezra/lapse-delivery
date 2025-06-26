@@ -5,3 +5,9 @@ export interface BalanceDataItem {
   currency: string;
   type: string;
 }
+
+export default interface BalanceInterface {
+  balance: number;
+  currency: string;
+  date: string;
+}

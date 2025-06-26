@@ -1,87 +1,93 @@
 import {
-  StyleProp,
   StyleSheet,
   Text,
-  TextProps,
-  TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
-  ViewStyle,
+  View,
 } from "react-native";
 import React from "react";
-import StyledText from "../others/StyledText";
-interface StyledButtonProps extends TouchableOpacityProps {
+
+export interface StyledButtonProps extends TouchableOpacityProps {
   title: string;
-  variant: "primary" | "secondary" | "tertiary";
-  textProps?: TextProps;
+  variant: "primary" | "secondary";
+  icon?: React.ReactNode;
 }
 
-const StyledButton = ({ title, variant, textProps, ...props }: StyledButtonProps) => {
-  const getButtonStyle = (): StyleProp<ViewStyle> => {
-    const baseStyle: ViewStyle = {
-      padding: 10,
-      borderRadius: 5,
-      alignItems: "center",
-      justifyContent: "center",
-    };
-    switch (variant) {
-      case "primary":
-        return {
-          ...baseStyle,
-          backgroundColor: "#000",
-        };
-      case "secondary":
-        return {
-          ...baseStyle,
-          backgroundColor: "#fff",
-          borderWidth: 1,
-          borderColor: "#000",
-        };
-      case "tertiary":
-        return {
-          ...baseStyle,
-          backgroundColor: "#fff",
-          borderWidth: 1,
-          borderColor: "#000",
-        };
-    }
-    return baseStyle;
-  };
-
-  const getTextStyle = (): StyleProp<TextStyle> => {
-    const baseStyle: TextStyle = {
-      fontSize: 16,
-      fontWeight: "bold",
-    };
-    switch (variant) {
-      case "primary":
-        return {
-          ...baseStyle,
-          color: "#fff",
-        };
-      case "secondary":
-        return {
-          ...baseStyle,
-          color: "#000",
-        };
-      case "tertiary":
-        return {
-          ...baseStyle,
-          color: "#000",
-        };
-    }
-    return baseStyle;
-  };
-
+const StyledButton: React.FC<StyledButtonProps> = ({
+  title,
+  variant,
+  icon,
+  style,
+  disabled,
+  ...props
+}) => {
   return (
-    <TouchableOpacity {...props} style={[getButtonStyle(), props.style]}>
-      <Text {...textProps} style={[getTextStyle(), textProps?.style]}>
-        {title}
-      </Text>
+    <TouchableOpacity
+      style={[
+        styles.button,
+        variant === "primary" ? styles.primaryButton : styles.secondaryButton,
+        disabled && styles.disabledButton,
+        style,
+      ]}
+      disabled={disabled}
+      {...props}
+    >
+      <View style={styles.content}>
+        {icon && <View style={styles.iconContainer}>{icon}</View>}
+        <Text
+          style={[
+            styles.text,
+            variant === "primary" ? styles.primaryText : styles.secondaryText,
+            disabled && styles.disabledText,
+          ]}
+        >
+          {title}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
 
 export default StyledButton;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  button: {
+    height: 48,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  primaryButton: {
+    backgroundColor: "#007AFF",
+  },
+  secondaryButton: {
+    backgroundColor: "#F8F8F8",
+    borderWidth: 1,
+    borderColor: "#EEEEEE",
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconContainer: {
+    marginRight: 8,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  primaryText: {
+    color: "#FFFFFF",
+  },
+  secondaryText: {
+    color: "#333333",
+  },
+  disabledText: {
+    color: "#999999",
+  },
+});

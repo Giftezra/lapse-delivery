@@ -36,10 +36,10 @@ const BottomSheetHeader = ({ onlineStatus }: BottomSheetHeaderProps) => {
         </Pressable>
         {onlineStatus ? (
           <View style={{ alignItems: "center" }}>
-            <StyledText children="You're online" variant="h2" />
+            <StyledText children="You're online" variant="titleLarge" />
             <StyledText
               children="be patient, you'll get a delivery soon"
-              variant="h6"
+              variant="labelSmall"
               style={{
                 textTransform: "lowercase",
                 color: "#666",
@@ -49,7 +49,7 @@ const BottomSheetHeader = ({ onlineStatus }: BottomSheetHeaderProps) => {
             />
           </View>
         ) : (
-          <StyledText children="You're offline" variant="h2" />
+          <StyledText children="You're offline" variant="titleLarge" />
         )}
         <Pressable>
           <MaterialIcons name="miscellaneous-services" size={24} />

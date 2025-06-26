@@ -1,32 +1,32 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import StyledText from "../helpers/others/StyledText";
 import { MaterialIcons } from "@expo/vector-icons";
+import { WeeklyTransactionInterface } from "@/app/interfaces/WalletInterface";
 interface WeeklyPaymentComponentProps {
-  date: string;
-  payout: number;
-  currency: string;
+  data: WeeklyTransactionInterface;
+  onPress: () => void;
 }
 
-const WeeklyPaymentComponent = ({ date, payout, currency }: WeeklyPaymentComponentProps) => {
+const WeeklyPaymentComponent = ({ data, onPress }: WeeklyPaymentComponentProps) => {
   return (
-    <View style={styles.maincontainer}>
-      <StyledText children="Recent Payouts" variant="h4" />
+    <TouchableOpacity style={styles.maincontainer} onPress={onPress}>
+      <StyledText children="Recent Payouts" variant="labelMedium" />
       <View style={styles.mainsection}>
         <View style={styles.section1}>
           <MaterialIcons name='calendar-month' size={24} color="black" />
           <View>
-            <StyledText children="Weekly Payment" variant="h4" />
-            <StyledText children={date} variant="h5" />
+            <StyledText children="Weekly Payment" variant="labelMedium" />
+            <StyledText children={data.initiated_date} variant="labelSmall" />
           </View>
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", gap: 1}}>
-          <StyledText children={currency} variant="h5" />
-          <StyledText children={payout.toFixed(2)} variant="h4" style={{fontFamily:'OswaldVariable'}}/>
+          <StyledText children={data.currency} variant="labelMedium" />
+          <StyledText children={data.amount.toFixed(2)} variant="titleMedium" style={{fontFamily:'OswaldVariable'}}/>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

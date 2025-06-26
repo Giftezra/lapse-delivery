@@ -4,11 +4,16 @@ import {
   View,
   TouchableOpacity,
   GestureResponderEvent,
+  Platform,
+  Dimensions,
 } from "react-native";
 import React from "react";
 import { DeliveryOptionsChoicesInterface } from "@/app/interfaces/Onboarding";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import StyledText from "@/app/components/helpers/others/StyledText";
+
+const { width } = Dimensions.get("window");
+
 const DeliveryChoicesCard = ({
   title,
   age,
@@ -25,61 +30,162 @@ const DeliveryChoicesCard = ({
     }
   };
 
+  const getVehicleIcon = () => {
+    switch (vehicle) {
+      case "Bike":
+        return "bike";
+      case "Car":
+        return "car";
+      default:
+        return "motorbike";
+    }
+  };
+
+  const getThemeColors = () => {
+    switch (vehicle) {
+      case "Bike":
+        return {
+          primary: selected ? "#0D7A3E" : "#FFFFFF",
+          secondary: "#E8F5ED",
+          accent: "#15B65D",
+        };
+      case "Car":
+        return {
+          primary: selected ? "#1E40AF" : "#FFFFFF",
+          secondary: "#EEF2FF",
+          accent: "#3B82F6",
+        };
+      default:
+        return {
+          primary: selected ? "#7E22CE" : "#FFFFFF",
+          secondary: "#F5F3FF",
+          accent: "#A855F7",
+        };
+    }
+  };
+
+  const colors = getThemeColors();
+  const textColor = selected ? "#FFFFFF" : "#1F2937";
+  const subtextColor = selected ? "#E5E7EB" : "#6B7280";
+
   return (
     <TouchableOpacity
       onPress={handlePress}
-      style={[styles.maincontainer, selected && styles.selectedContainer]}
+      style={styles.cardWrapper}
+      activeOpacity={0.95}
     >
-      {/* Delivery Badge */}
-      <View style={styles.deliveryBadge}>
-        <MaterialCommunityIcons
-          name={
-            vehicle === "Bike"
-              ? "bike"
-              : vehicle === "Car"
-              ? "car"
-              : "motorbike"
-          }
-          size={16}
-          color="#0D7A3E"
-        />
-        <Text style={styles.deliveryText}>Delivery</Text>
-      </View>
-
-      <View style={styles.contentContainer}>
-        {/* Title and Content */}
-        <View style={styles.textContent}>
-          <StyledText variant="h5" children={title} />
-          <StyledText variant="body" children={`Age: ${age}+`} />
-
-          {vehicle !== "Bike" && description && (
-            <StyledText variant="body" children={`Vehicle: ${description}`} />
-          )}
-
-          {license && (
-            <StyledText variant="body" children={`License: ${license}`} />
-          )}
-          {expierience && (
-            <StyledText
-              variant="body"
-              children={`Driving Experience: ${expierience}`}
+      <View
+        style={[
+          styles.mainContainer,
+          { backgroundColor: colors.primary },
+          selected && styles.selectedContainer,
+        ]}
+      >
+        <View style={styles.headerSection}>
+          <View
+            style={[
+              styles.iconCircle,
+              {
+                backgroundColor: selected
+                  ? "rgba(255,255,255,0.15)"
+                  : colors.secondary,
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={getVehicleIcon()}
+              size={28}
+              color={selected ? "#FFFFFF" : colors.accent}
             />
-          )}
+          </View>
+          <View style={styles.titleSection}>
+            <StyledText
+              variant="labelMedium"
+              style={[styles.title, { color: textColor }]}
+            >
+              {title}
+            </StyledText>
+            <View style={styles.badgeContainer}>
+              <View
+                style={[
+                  styles.badge,
+                  {
+                    backgroundColor: selected
+                      ? "rgba(255,255,255,0.15)"
+                      : colors.secondary,
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name="clock-time-four"
+                  size={14}
+                  color={selected ? "#FFFFFF" : colors.accent}
+                />
+                <Text
+                  style={[
+                    styles.badgeText,
+                    { color: selected ? "#FFFFFF" : colors.accent },
+                  ]}
+                >
+                  Start Today
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Vehicle Icon */}
-        <View style={styles.iconContainer}>
-          <MaterialCommunityIcons
-            name={
-              vehicle === "Bike"
-                ? "bike"
-                : vehicle === "Car"
-                ? "car"
-                : "motorbike"
-            }
-            size={40}
-            color="#666"
-          />
+        <View style={styles.detailsSection}>
+          <View style={styles.detailRow}>
+            <View style={styles.detail}>
+              <MaterialCommunityIcons
+                name="account"
+                size={16}
+                color={subtextColor}
+              />
+              <Text style={[styles.detailText, { color: subtextColor }]}>
+                {age}+ years
+              </Text>
+            </View>
+            {vehicle !== "Bike" && description && (
+              <View style={styles.detail}>
+                <MaterialCommunityIcons
+                  name="shield-check"
+                  size={16}
+                  color={subtextColor}
+                />
+                <Text style={[styles.detailText, { color: subtextColor }]}>
+                  Insurance Required
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.detailRow}>
+            {license && (
+              <View style={styles.detail}>
+                <MaterialCommunityIcons
+                  name="license"
+                  size={16}
+                  color={subtextColor}
+                />
+                <Text style={[styles.detailText, { color: subtextColor }]}>
+                  License Required
+                </Text>
+              </View>
+            )}
+            {expierience && (
+              <View style={styles.detail}>
+                <MaterialCommunityIcons
+                  name="star"
+                  size={16}
+                  color={subtextColor}
+                />
+                <Text style={[styles.detailText, { color: subtextColor }]}>
+                  {expierience} exp.
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -89,68 +195,85 @@ const DeliveryChoicesCard = ({
 export default DeliveryChoicesCard;
 
 const styles = StyleSheet.create({
-  maincontainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    marginVertical: 4,
-    marginHorizontal: 5,
-    padding: 15,
+  cardWrapper: {
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 4,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
+  },
+  mainContainer: {
+    flex:1,
+    padding: 10,
     borderWidth: 1,
     borderColor: "#E5E5E5",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderRadius: 5,
   },
   selectedContainer: {
-    borderColor: "#0D7A3E",
-    borderWidth: 2,
-    backgroundColor: "#FAFFFE",
+    borderWidth: 0,
   },
-  deliveryBadge: {
+  headerSection: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E8F5ED",
-    alignSelf: "flex-start",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginBottom: 12,
-    gap: 4,
+    marginBottom: 20,
   },
-  deliveryText: {
-    color: "#0D7A3E",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  contentContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  textContent: {
-    flex: 1,
-    marginRight: 16,
-  },
-  ageText: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  text: {
-    fontSize: 14,
-    color: "#000  ",
-    marginBottom: 4,
-  },
-
-  iconContainer: {
-    width: 60,
-    height: 60,
+  iconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 16,
+  },
+  titleSection: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  badgeContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  detailsSection: {
+    gap: 12,
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 24,
+  },
+  detail: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  detailText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
 });

@@ -18,7 +18,7 @@ const PersonalInfoComponent: React.FC<PersonalInfoProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <StyledText variant="h3" children="Personal info" style={styles.title} />
+      <StyledText variant="labelMedium" children="Personal info" style={styles.title} />
 
       {/* Profile Image */}
       <View style={styles.profileImageContainer}>
@@ -39,8 +39,8 @@ const PersonalInfoComponent: React.FC<PersonalInfoProps> = ({
       {/* Name Section */}
       <TouchableOpacity style={styles.infoSection}>
         <View style={styles.infoContent}>
-          <StyledText variant="h4" children="Name" />
-          <StyledText variant="h5" children={name} />
+          <StyledText variant="labelMedium" children="Name" />
+          <StyledText variant="labelSmall" children={name} />
         </View>
         <Ionicons name="chevron-forward" size={24} color="#999" />
       </TouchableOpacity>
@@ -48,8 +48,8 @@ const PersonalInfoComponent: React.FC<PersonalInfoProps> = ({
       {/* Phone Number Section */}
       <TouchableOpacity style={styles.infoSection}>
         <View style={styles.infoContent}>
-          <StyledText variant="h4" children="Phone number" />
-          <StyledText variant="h6" children={phoneNumber} />
+          <StyledText variant="labelMedium" children="Phone number" />
+          <StyledText variant="labelSmall" children={phoneNumber} />
         </View>
         <Ionicons name="chevron-forward" size={24} color="#999" />
       </TouchableOpacity>
@@ -57,8 +57,8 @@ const PersonalInfoComponent: React.FC<PersonalInfoProps> = ({
       {/* Email Section */}
       <TouchableOpacity style={styles.infoSection}>
         <View style={styles.infoContent}>
-          <StyledText variant="h4" children="Email" />
-          <StyledText variant="h6" children={email}  /> 
+          <StyledText variant="labelMedium" children="Email" />
+          <StyledText variant="labelSmall" children={email}  /> 
         </View>
         <Ionicons name="chevron-forward" size={24} color="#999" />
       </TouchableOpacity>
@@ -66,8 +66,8 @@ const PersonalInfoComponent: React.FC<PersonalInfoProps> = ({
       {/* Language Section */}
       <TouchableOpacity style={styles.infoSection}>
         <View style={styles.infoContent}>
-          <StyledText variant="h4" children="Language" />
-          <StyledText variant="h6" children="Update device language" />
+          <StyledText variant="labelMedium" children="Language" />
+          <StyledText variant="labelSmall" children="Update device language" />
         </View>
         <Ionicons name="open-outline" size={24} color="#999" />
       </TouchableOpacity>

@@ -21,21 +21,21 @@ const SideComponent = ({
           source={typeof image === "string" ? { uri: image } : image}
           style={styles.profileImage}
         />
-        <StyledText children={name} variant="h5" />
+        <StyledText children={name} variant="titleMedium" />
       </View>
 
       <View style={styles.sectionContainer}>
         <StyledText
-          children="inbox"
-          variant="h2"
+          children="communications"
+          variant="titleLarge"
           onPress={() => {
-            router.push("" as any);
+            router.push("/main/screens/communication/CommunicationsScreen" as any);
             setIsSideComponentVisible(false);
           }}
         />
         <StyledText
           children="Referals"
-          variant="h2"
+          variant="titleLarge"
           onPress={() => {
             router.push("" as any);
             setIsSideComponentVisible(false);
@@ -43,7 +43,7 @@ const SideComponent = ({
         />
         <StyledText
           children="Missons"
-          variant="h2"
+          variant="titleLarge"
           onPress={() => {
             router.push("" as any);
             setIsSideComponentVisible(false);
@@ -51,23 +51,23 @@ const SideComponent = ({
         />
         <StyledText
           children="Earnings"
-          variant="h2"
+          variant="titleLarge"
           onPress={() => {
-            router.push("/main/screens/EarningScreen");
+            router.push("/main/screens/earnings/EarningScreen");
             setIsSideComponentVisible(false);
           }}
         />
         <StyledText
           children="Wallet"
-          variant="h2"
+          variant="titleLarge"
           onPress={() => {
-            router.push("/main/screens/WalletScreen");
+            router.push("/main/screens/wallet/WalletScreen");
             setIsSideComponentVisible(false);
           }}
         />
         <StyledText
           children="Account"
-          variant="h2"
+          variant="titleLarge"
           onPress={() => {
             router.push("/main/screens/accounts/AccountScreen");
             setIsSideComponentVisible(false);
@@ -76,8 +76,14 @@ const SideComponent = ({
       </View>
 
       <View style={styles.footerContainer}>
-        <StyledText children="Help" variant="h6" />
-        <StyledText children="Info" variant="h6" />
+        <StyledText
+          children="Help"
+          variant="labelSmall"
+          onPress={() => {
+            router.push("/main/screens/help/HelpScreen");
+          }}
+        />
+        <StyledText children="Info" variant="labelSmall" />
       </View>
     </View>
   );

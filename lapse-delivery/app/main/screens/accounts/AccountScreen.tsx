@@ -26,13 +26,19 @@ const AccountScreen = () => {
     "edit address",
     "about",
     "privacy",
-    "app settings",
+    "settings",
   ];
   /* Manage the routing of the account items given the type passed */
   const handleRouting = (type: string) => {
     switch (type) {
       case "manage account":
-        router.push('/main/screens/accounts/AccountManageScreen');
+        router.push("/main/screens/accounts/AccountManageScreen");
+        break;
+      case "payment":
+        router.push("/main/screens/payments/PaymentScreen");
+        break;
+      case "settings":
+        router.push("/main/screens/settings/SettingsScreen");
         break;
       default:
         // router.push(`/main/screens/accounts/${type}`);
@@ -48,7 +54,7 @@ const AccountScreen = () => {
             <MaterialCommunityIcons name="arrow-left" size={24} color="black" />
           </Pressable>
           <Animated.View style={{ opacity: headerOpacity }}>
-            <StyledText children="Account" variant="h3" />
+            <StyledText children="Account" variant="headlineLarge" />
           </Animated.View>
         </View>
       )}
@@ -63,7 +69,7 @@ const AccountScreen = () => {
             }),
           }}
         >
-          <StyledText children="Account" variant="h1" />
+          <StyledText children="Account" variant="headlineLarge" />
         </Animated.View>
       )}
       <View style={styles.scrollViewcontainer}>
@@ -94,10 +100,10 @@ const AccountScreen = () => {
           ))}
           <View style={styles.logoutcontainer}>
             <Pressable>
-              <StyledText children="switch account" variant="h5" />
+              <StyledText children="switch account" variant="labelMedium" />
             </Pressable>
             <Pressable>
-              <StyledText children="Logout" variant="h5" />
+              <StyledText children="Logout" variant="labelMedium" />
             </Pressable>
           </View>
         </ScrollView>

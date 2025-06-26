@@ -85,9 +85,9 @@ const StyledTextInput: React.FC<StyledTextInputProps> = ({
   return (
     <View style={styles.container}>
       {label && (
-        <StyledText variant="h5" style={[styles.label]}>
+        <StyledText variant="labelMedium" style={[styles.label]}>
           {label}
-        </StyledText>
+        </StyledText> 
       )}
       <TextInput
         style={[getTextInputStyle(), style]}
@@ -95,12 +95,12 @@ const StyledTextInput: React.FC<StyledTextInputProps> = ({
         {...props}
       />
       {helper && (
-        <StyledText variant="h6" style={styles.helper}>
+        <StyledText variant="labelSmall" style={styles.helper}>
           {helper}
         </StyledText>
       )}
       {info && (
-        <StyledText variant="h6" style={styles.info}>
+        <StyledText variant="labelSmall" style={styles.info}>
           {info}
         </StyledText>
       )}

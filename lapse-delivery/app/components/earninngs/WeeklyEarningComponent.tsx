@@ -17,18 +17,18 @@ const WeeklyEarningComponent = ({
     <View style={styles.maincontainer}>
       <StyledText
         children={"Earnings"}
-        variant="h2"
+        variant="titleLarge"
         style={styles.earningTitleText}
       />
-      <StyledText children={`${dayFrom} - ${dayTo}`} variant="h5" />
+      <StyledText children={`${dayFrom} - ${dayTo}`} variant="labelSmall" />
       <View style={styles.earningContainer}>
         <StyledText
           children={`${currency}`}
-          variant="h3"
+          variant="titleMedium"
         />
         <StyledText
           children={`${current_earning.toFixed(2)}`}
-          variant="h3"
+          variant="titleMedium"
           style={styles.earningText}
         />
       </View>

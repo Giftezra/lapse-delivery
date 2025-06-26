@@ -10,7 +10,7 @@ import PrivacyAndDataComponent from "@/app/components/accounts/manage-account/Pr
 import { ScrollView } from "react-native-gesture-handler";
 
 const AccountManageScreen = () => {
-  const title = ["Home", "Personal Info", "Security", "Privacy & Data"];
+  const title = ["Home", "Personal info", "Security", "Privacy & Data"];
   const [selectedTitle, setSelectedTitle] = useState<string>(title[0]);
 
   const handleTitlePress = (title: string) => {
@@ -19,12 +19,10 @@ const AccountManageScreen = () => {
   return (
     <View style={styles.maincontainer}>
       {/* Display the router back button if the router can go back. Wrap the button in a pressable component  */}
-      {router.canGoBack() && (
-        <Pressable onPress={() => router.back()} style={styles.header}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="black" />
-          <StyledText children="Manage Account" variant="h3" />
-        </Pressable>
-      )}
+      <Pressable onPress={() => router.back()} style={styles.header}>
+        <MaterialCommunityIcons name="arrow-left" size={24} color="black" />
+        <StyledText children="Manage Account" variant="headlineSmall" />
+      </Pressable>
 
       <ScrollView
         style={styles.mainsection}
@@ -43,7 +41,7 @@ const AccountManageScreen = () => {
               ]}
               onPress={() => handleTitlePress(item)}
             >
-              <StyledText children={item} variant="h6" />
+              <StyledText children={item} variant="titleMedium" />
             </Pressable>
           ))}
         </View>
@@ -55,9 +53,10 @@ const AccountManageScreen = () => {
               name="John Doe"
               email="john.doe@example.com"
               image={require("@/assets/images/user_image.jpg")}
+              onPress={handleTitlePress}
             />
           )}
-          {selectedTitle === "Personal Info" && (
+          {selectedTitle === "Personal info" && (
             <PersonalInfoComponent
               name="John Doe"
               phoneNumber="1234567890"

@@ -15,7 +15,7 @@ const WhereToDeliver = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <StyledText style={styles.title} variant="h4">
+        <StyledText style={styles.title} variant="labelMedium">
           Where do you want to deliver?
         </StyledText>
         <View style={styles.inputContainer} >

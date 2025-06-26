@@ -1,40 +1,46 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import StyledText from "../helpers/others/StyledText";
+import BalanceInterface from "@/app/interfaces/BalanceInterface";
+
+interface WalletBalanceComponentProps{
+  data: BalanceInterface;
+  onPress: () => void;
+}
 
 const WalletBalanceComponent = ({
-  balance,
-  currency,
-  date,
-}: {
-  balance: number;
-  currency: string;
-  date: string;
-}) => {
+  data,
+  onPress,
+}: WalletBalanceComponentProps) => {
   return (
-    <View style={styles.maincontainer}>
+    <TouchableOpacity style={styles.maincontainer} onPress={onPress}>
       <StyledText
         children="Balance"
-        variant="h3"
+        variant="titleMedium"
         style={{
           marginBottom: 5,
         }}
       />
       <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-        <StyledText children={currency} variant="h5" />
-        <StyledText children={balance} variant="h3" />
+        <StyledText children={data.currency} variant="labelMedium" />
+        <StyledText
+          children={data.balance}
+          variant="displayMedium"
+          style={{ fontWeight: "bold" }}
+        />
+        <StyledText
+          children={`Payout scheduled: ${data.date}`}
+          variant="labelSmall"
+          style={{
+            marginTop: 10,
+            fontFamily: "BarlowRegular",
+            fontWeight: "400",
+            fontSize: 14,
+            color: "black",
+          }}
+        />
       </View>
-      <StyledText
-        children={`Payout scheduled: ${date}`}
-        variant="h4"
-        style={{
-          marginTop: 10,
-          fontFamily: "BarlowRegular",
-          fontWeight: "400",
-          fontSize: 14,
-        }}
-      />
-    </View>
+    </TouchableOpacity>
   );
 };
 

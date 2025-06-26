@@ -43,17 +43,17 @@ const BalanceItemsComponent = ({ item }: { item: BalanceDataItem }) => {
         />
         <View style={{ gap: 5 }}>
           <StyledText
-            variant="h4"
+            variant="labelMedium"
             children={item.type}
             style={{ fontSize: 14, fontWeight: "600" }}
           />
-          <StyledText variant="h6" children={item.time} />
+          <StyledText variant="labelSmall" children={item.time} />
         </View>
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 0.5 }}>
-        <StyledText variant="h4" children={item.currency} />
-        <StyledText variant="h4" children={item.amount} />
+        <StyledText variant="titleMedium" children={item.currency} />
+        <StyledText variant="titleMedium" children={item.amount} />
       </View>
     </View>
   );

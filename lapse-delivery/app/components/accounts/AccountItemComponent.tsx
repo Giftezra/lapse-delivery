@@ -45,10 +45,7 @@ const AccountItemComponent = ({
   };
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={styles.maincontainer}
-    >
+    <TouchableOpacity onPress={onPress} style={styles.maincontainer}>
       <MaterialCommunityIcons
         name={
           type === "vehicle"
@@ -75,7 +72,7 @@ const AccountItemComponent = ({
         color="black"
       />
       <View style={{ gap: 5 }}>
-        <StyledText children={getTitle()} variant="h3" />
+        <StyledText children={getTitle()} variant="labelMedium" />
         {vehicle && (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
             <MaterialCommunityIcons
@@ -91,7 +88,7 @@ const AccountItemComponent = ({
               size={15}
               color="black"
             />
-            <StyledText children={vehicle} variant="h5" />
+            <StyledText children={vehicle} variant="titleMedium" />
           </View>
         )}
       </View>

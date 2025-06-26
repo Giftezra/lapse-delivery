@@ -7,12 +7,13 @@ interface HomeCompomentProps {
   name: string;
   email: string;
   image?: any;
+  onPress?: (item: string) => void;
 }
 
 /* Create a component to display the content of this home in a card view */
-const HomeCard = ({ title, icon }: { title: string; icon: ReactNode }) => {
+const HomeCard = ({ title, onPress }: { title: string; onPress?: (item: string) => void }) => {
   return (
-    <TouchableOpacity style={styles.homecardcontainer}>
+    <TouchableOpacity style={styles.homecardcontainer} onPress={() => onPress?.(title)}>
       <MaterialCommunityIcons
         name={
           title === "Personal info"
@@ -26,12 +27,13 @@ const HomeCard = ({ title, icon }: { title: string; icon: ReactNode }) => {
         size={24}
         color="black"
       />
-      <StyledText children={title} variant="h4" />
+      <StyledText children={title} variant="labelMedium" />
     </TouchableOpacity>
   );
 };
 
-const HomeCompoment = ({ name, email, image }: HomeCompomentProps) => {
+const HomeCompoment = ({ name, email, image, onPress }: HomeCompomentProps) => {
+
   return (
     <View style={styles.container}>
       {/* Profile Section */}
@@ -40,7 +42,7 @@ const HomeCompoment = ({ name, email, image }: HomeCompomentProps) => {
           source={typeof image === 'string' ? { uri: image } : image}
           style={styles.profileImage}
         />
-        <StyledText variant="h2" style={styles.name}>
+        <StyledText variant="titleLarge" style={styles.name}>
           {name}
         </StyledText>
         <Text style={styles.email}>{email}</Text>
@@ -48,21 +50,21 @@ const HomeCompoment = ({ name, email, image }: HomeCompomentProps) => {
 
       {/* Menu Items */}
       <View style={styles.menuContainer}>
-        <HomeCard title="Personal info" icon="account" />
-        <HomeCard title="Security" icon="shield-check" />
-        <HomeCard title="Privacy & Data" icon="lock" />
+        <HomeCard title="Personal Info" onPress={()=> onPress?.("Personal info")} />
+        <HomeCard title="Security" onPress={()=> onPress?.("Security")} />
+        <HomeCard title="Privacy & Data" onPress={()=> onPress?.("Privacy & Data")} />
       </View>
 
       {/* Suggestions Section */}
       <View style={styles.suggestionsSection}>
-        <StyledText variant="h4" children="Suggestions" style={styles.sectionTitle} />
+        <StyledText variant="labelMedium" children="Suggestions" style={styles.sectionTitle} />
 
         <TouchableOpacity style={styles.checkupCard}>
           <View style={styles.checkupContent}>
             <View>
-              <StyledText variant="h4" children="Complete your account checkup" />
+              <StyledText variant="labelMedium" children="Complete your account checkup" />
 
-              <StyledText variant="h6" children="Complete your account checkup to make Uber work better for you and keep you secure." style={styles.checkupDescription} />
+              <StyledText variant="labelSmall" children="Complete your account checkup to make Uber work better for you and keep you secure." style={styles.checkupDescription} />
             </View>
             <MaterialCommunityIcons
               name="card-account-details"
@@ -71,7 +73,7 @@ const HomeCompoment = ({ name, email, image }: HomeCompomentProps) => {
             />  
           </View>
           <TouchableOpacity style={styles.beginButton}>
-            <StyledText variant="h4" children="Begin checkup" style={styles.beginButtonText} />
+            <StyledText variant="labelMedium" children="Begin checkup" style={styles.beginButtonText} />
           </TouchableOpacity>
         </TouchableOpacity>
       </View>

@@ -1,101 +1,51 @@
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextProps,
-  TextStyle,
-  View,
-} from "react-native";
 import React from "react";
+import { StyleProp, TextStyle, TextProps } from "react-native";
+import { Text } from "react-native-paper";
+import { VariantProp } from "react-native-paper/lib/typescript/components/Typography/types";
 
-interface StyledTextProps extends TextProps {
+interface StyledTextProps extends Omit<TextProps, "style"> {
+  variant?:
+    | "displayLarge"
+    | "displayMedium"
+    | "displaySmall"
+    | "headlineLarge"
+    | "headlineMedium"
+    | "headlineSmall"
+    | "titleLarge"
+    | "titleMedium"
+    | "titleSmall"
+    | "labelLarge"
+    | "labelMedium"
+    | "labelSmall"
+    | "bodyLarge"
+    | "bodyMedium"
+    | "bodySmall";
   children: React.ReactNode;
   style?: StyleProp<TextStyle>;
-  variant:
-    | "h1"
-    | "h2"
-    | "h3"
-    | "h4"
-    | "h5"
-    | "h6"
-    | "body"
-    | "caption"
-    | "overline";
 }
 
-const StyledText = ({
+const StyledText: React.FC<StyledTextProps> = ({
+  variant = "bodyMedium",
   children,
   style,
-  variant,
   ...props
-}: StyledTextProps) => {
-  const getVariantStyle = (): StyleProp<TextStyle> => {
+}) => {
+  const getTextStyle = (): StyleProp<TextStyle> => {
     const baseStyle: TextStyle = {
-      fontSize: 16,
-      fontWeight: "400",
       color: "#000",
-      letterSpacing: 0.5,
     };
-    switch (variant) {
-      case "h1":
-        return {
-          ...baseStyle,
-          fontSize: 28,
-          fontWeight: "500",
-          fontFamily: "RobotoBold",
-        };
-      case "h2":
-        return {
-          ...baseStyle,
-          fontSize: 24,
-          fontWeight: "500",
-          fontFamily: "RobotoRegular",
-        };
-      case "h3":
-        return {
-          ...baseStyle,
-          fontSize: 20,
-          fontWeight: "500",
-          fontFamily: "RobotoRegular",
-          textTransform: "capitalize",
-        };
-      case "h4":
-        return {
-          ...baseStyle,
-          fontSize: 16,
-          fontWeight: "500",
-          fontFamily: "RobotoRegular",
-          textTransform: "capitalize",
-        };
-      case "h5":
-        return {
-          ...baseStyle,
-          fontSize: 14,
-          fontWeight: "500",
-          fontFamily: "RobotoRegular",
-          textTransform: "capitalize",
-        };
-      case "h6":
-        return {
-          ...baseStyle,
-          fontSize: 12,
-          fontWeight: "500",
-          fontFamily: "RobotoMedium",
-          textTransform: "capitalize",
-        };
-      case "body":
-        return {
-          ...baseStyle,
-          fontSize: 13,
-          fontWeight: "400",
-          letterSpacing: 0.5,
-          marginBottom: 4,
-          textTransform: "capitalize",
-        };
-    }
+    return baseStyle;
   };
-  /* Get the styles based on the variant */
-  return <Text style={[getVariantStyle(), style]} {...props}>{children}</Text>;
+
+  return (
+    <Text
+      style={[getTextStyle(), style]}
+      {...props}
+      variant={variant as VariantProp<never>}
+    >
+      {children}
+    </Text>
+  );
 };
 
 export default StyledText;
