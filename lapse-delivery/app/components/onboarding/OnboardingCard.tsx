@@ -3,6 +3,8 @@ import React from "react";
 import { OnboardingCardInterface } from "@/app/interfaces/onboarding/OnboardingInterfaces";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import StyledText from "../helpers/others/StyledText";
 
 const OnboardingCard: React.FC<OnboardingCardInterface> = ({
   title,
@@ -15,18 +17,25 @@ const OnboardingCard: React.FC<OnboardingCardInterface> = ({
     router.push(route as any);
   };
 
+  const cardColor = useThemeColor({}, "cards");
+  const borderColor = useThemeColor({}, "borders");
+  const tintColor = useThemeColor({}, "tint");
+
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
+    <TouchableOpacity
+      style={[styles.container, { backgroundColor: cardColor, borderColor }]}
+      onPress={handlePress}
+    >
       <View style={styles.iconContainer}>
         <Ionicons
           name={icon as any}
           size={24}
-          color={completed ? "#4CAF50" : "#666666"}
+          color={tintColor}
         />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <StyledText style={styles.title} children={title} />
+        <StyledText style={styles.description} children={description} />
       </View>
       <View style={styles.statusContainer}>
         {completed ? (
@@ -45,13 +54,17 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    padding: 16,
+    paddingVertical: 30,
+    paddingHorizontal: 12,
     marginHorizontal: 16,
     marginBottom: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#EEEEEE",
+    shadowColor: "#fff",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 4,
   },
   iconContainer: {
     width: 40,
@@ -68,7 +81,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333333",
     marginBottom: 4,
   },
   description: {

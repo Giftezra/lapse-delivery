@@ -1,36 +1,48 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import { OnboardingCardInterface } from "@/app/interfaces/onboarding/OnboardingInterfaces";
 import OnboardingCard from "@/app/components/onboarding/OnboardingCard";
 import StyledButton from "@/app/components/helpers/buttons/StyledButton";
 import { router, useLocalSearchParams } from "expo-router";
-import { useOnboarding } from "@/app/contexts/OnboardingContext";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import StyledText from "@/app/components/helpers/others/StyledText";
+import { LinearGradient } from "expo-linear-gradient";
+import { useAppSelector } from "@/app/store/store";
 
 const OnboardingScreen = () => {
   const { vehicleType } = useLocalSearchParams<{ vehicleType: string }>();
-  const { state, isStepCompleted } = useOnboarding();
+  const { completedSteps } = useAppSelector((state) => state.onboarding);
 
+  /**
+   * Manages the displays given the users vehicle types.
+   * When a user sends a vehichle type from the params, use the params to get the vehivle type and then return the route-button types based on the vehicle type.
+   *
+   * @returns
+   */
   const getOnboardingSteps = (): OnboardingCardInterface[] => {
     const baseSteps: OnboardingCardInterface[] = [
       {
         title: "Personal Information",
         description: "Add your basic details and contact information",
         icon: "person-outline",
-        completed: isStepCompleted("/main/onboard/PersonalInformationScreen"),
         route: "/main/onboard/PersonalInformationScreen",
       },
       {
         title: "Bank Details",
         description: "Add your bank account for payments",
         icon: "card-outline",
-        completed: isStepCompleted("/main/onboard/BankInformationScreen"),
         route: "/main/onboard/BankInformationScreen",
       },
       {
         title: "Identity Verification",
         description: "Verify your identity with valid documents",
         icon: "shield-checkmark-outline",
-        completed: isStepCompleted("/main/onboard/IdentityVerificationScreen"),
         route: "/main/onboard/IdentityVerificationScreen",
       },
     ];
@@ -45,7 +57,6 @@ const OnboardingScreen = () => {
         title: "Vehicle Information",
         description: "Add your vehicle details and documents",
         icon: "car-outline",
-        completed: isStepCompleted("/main/onboard/VehicleInformationScreen"),
         route: "/main/onboard/VehicleInformationScreen",
       },
     ];
@@ -53,26 +64,37 @@ const OnboardingScreen = () => {
 
   const handleContinue = () => {
     const steps = getOnboardingSteps();
-    if (state.completedSteps.length === steps.length) {
+    if (completedSteps.length === steps.length) {
       // All steps completed, proceed to final submission
       router.push("/main/onboard/submit" as any);
     } else {
       // Find the first incomplete step and navigate to it
-      const nextStep = steps.find((step) => !isStepCompleted(step.route));
+      const nextStep = steps.find((step) => !completedSteps.includes(step.route));
       if (nextStep) {
         router.push(nextStep.route as any);
       }
     }
   };
 
+  const backgroundColor = useThemeColor({}, "background");
+  const cardColor = useThemeColor({}, "cards");
+  const buttonColor = useThemeColor({}, "buttons");
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Complete Your Profile</Text>
-        <Text style={styles.subtitle}>
-          {state.completedSteps.length} of {getOnboardingSteps().length} steps
-          completed
-        </Text>
+    <View style={[styles.container, { backgroundColor }]}>
+      <View style={[styles.header, { backgroundColor }]}>
+        <StyledText
+          style={{}}
+          children="Complete Your Profile"
+          variant="titleMedium"
+        />
+        <StyledText
+          style={{}}
+          children={`${completedSteps.length} of ${
+            getOnboardingSteps().length
+          } steps completed`}
+          variant="bodyMedium"
+        />
       </View>
 
       <ScrollView
@@ -80,20 +102,33 @@ const OnboardingScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         {getOnboardingSteps().map((step, index) => (
-          <OnboardingCard key={index} {...step} />
+          <OnboardingCard key={index} {...step} completed={completedSteps.includes(step.route)}/>
         ))}
       </ScrollView>
 
-      <View style={styles.footer}>
-        <StyledButton
-          title={
-            state.completedSteps.length === getOnboardingSteps().length
-              ? "Submit Application"
-              : "Continue"
-          }
-          variant="primary"
-          onPress={handleContinue}
-        />
+      <View style={[styles.footer, { backgroundColor }]}>
+        <LinearGradient
+          colors={[buttonColor, cardColor]}
+          style={styles.button}
+          start={{ x: 5, y: 20 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <TouchableOpacity
+            onPress={handleContinue}
+            style={{
+              paddingVertical: 18,
+              paddingHorizontal: 10,
+            }}
+          >
+            <StyledText
+              children={
+                completedSteps.length === getOnboardingSteps().length
+                  ? "Submit Application"
+                  : "Continue"
+              }
+            />
+          </TouchableOpacity>
+        </LinearGradient>
       </View>
     </View>
   );
@@ -112,16 +147,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#EEEEEE",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginTop: 4,
-  },
   scrollView: {
     flex: 1,
   },
@@ -130,8 +155,19 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
-    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
     borderTopColor: "#EEEEEE",
+  },
+  button: {
+    maxWidth: 300,
+    minWidth: 300,
+    alignItems: "center",
+    borderRadius: 30,
+    shadowColor: "#fff",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 4,
+    alignSelf: "flex-end",
   },
 });

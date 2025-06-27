@@ -1,26 +1,26 @@
+import { GestureResponderEvent } from "react-native";
 export interface PersonalInfoInterface {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  phoneNumber: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
+  first_name?: string;
+  last_name?: string;
+  dob?: string;
+  phoneNumber?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
 }
 
 export interface BankInfoInterface {
-  accountHolderName: string;
-  accountNumber: string;
-  bankName: string;
-  routingNumber: string;
-  accountType: "checking" | "savings";
-  branchCode: string;
+  accountHolderName?: string;
+  accountNumber?: string;
+  bankName?: string;
+  iban?: string;
+  bic?: string;
 }
 
 export interface IdentityInfoInterface {
-  idType: "driverLicense" | "passport" | "stateID";
+  idType: "driverLicense" | "passport" | "governmentID";
   idNumber: string;
   expiryDate: string;
   frontImage: string;
@@ -29,41 +29,45 @@ export interface IdentityInfoInterface {
 }
 
 export interface VehicleInfoInterface {
-  vehicleType: "motorcycle" | "car";
-  make: string;
-  model: string;
-  year: string;
-  color: string;
-  licensePlate: string;
-  registrationNumber: string;
-  insuranceNumber: string;
-  insuranceProvider: string;
-  insuranceExpiryDate: string;
+  vehicleType: "motorcycle" | "car" | "bicycle";
+  make?: string;
+  model?: string;
+  year?: string;
+  registrationNumber?: string;
+  insuranceNumber?: string;
+  insuranceProvider?: string;
+  insuranceExpiryDate?: string;
+  roadWorthy?: {
+    isRoadWorthy?: boolean;
+    lastInspectionDate?: string;
+    nextInspectionDate?: string;
+    documents?: any;
+  };
+}
+
+export interface DeliveryOptionsChoicesInterface {
+  title: string;
+  description?: string;
+  age: number;
+  license?: string;
+  expierience?: string;
+  vehicle: "car" | "bicycle" | "motorcycle";
+  selected?: boolean;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 export interface OnboardingCardInterface {
   title: string;
   description: string;
   icon: string;
-  completed: boolean;
   route: string;
+  completed?: boolean;
 }
 
-export interface OnboardingProgressInterface {
-  currentStep: number;
-  totalSteps: number;
+export default interface OnboardingState {
+  personalInfo: PersonalInfoInterface | null;
+  bankInfo: BankInfoInterface | null;
+  vehicleInfo: VehicleInfoInterface | null;
+  identityInfo: IdentityInfoInterface | null;
   completedSteps: string[];
 }
-
-export interface PersonalInfoForm extends PersonalInfoInterface {}
-
-export interface BankInfoForm extends BankInfoInterface {}
-
-export interface VehicleInfoForm extends VehicleInfoInterface {}
-
-export interface DocumentUpload {
-  uri: string;
-  type: string;
-}
-
-export type VehicleType = "motorcycle" | "car";

@@ -6,10 +6,13 @@ import {
   View,
 } from "react-native";
 import React from "react";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import StyledText from "@/app/components/helpers/others/StyledText";
+
 
 export interface StyledButtonProps extends TouchableOpacityProps {
   title: string;
-  variant: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "tertiary";
   icon?: React.ReactNode;
 }
 
@@ -21,29 +24,24 @@ const StyledButton: React.FC<StyledButtonProps> = ({
   disabled,
   ...props
 }) => {
+  const buttonColor = useThemeColor({}, "buttons");
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        variant === "primary" ? styles.primaryButton : styles.secondaryButton,
+        variant === "secondary"
+          ? styles.secondaryButton
+          : variant === "tertiary"
+          ? styles.tertiaryButton
+          : styles.tertiaryButton,
         disabled && styles.disabledButton,
         style,
+        { backgroundColor: buttonColor },
       ]}
       disabled={disabled}
       {...props}
     >
-      <View style={styles.content}>
-        {icon && <View style={styles.iconContainer}>{icon}</View>}
-        <Text
-          style={[
-            styles.text,
-            variant === "primary" ? styles.primaryText : styles.secondaryText,
-            disabled && styles.disabledText,
-          ]}
-        >
-          {title}
-        </Text>
-      </View>
+      <StyledText style={[disabled && styles.disabledText]}>{title}</StyledText>
     </TouchableOpacity>
   );
 };
@@ -52,40 +50,27 @@ export default StyledButton;
 
 const styles = StyleSheet.create({
   button: {
-    height: 48,
-    borderRadius: 8,
+    borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  primaryButton: {
-    backgroundColor: "#007AFF",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
   },
   secondaryButton: {
-    backgroundColor: "#F8F8F8",
-    borderWidth: 1,
-    borderColor: "#EEEEEE",
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    alignItems: "center",
+  },
+  tertiaryButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    alignItems: "center",
   },
   disabledButton: {
     opacity: 0.5,
   },
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   iconContainer: {
     marginRight: 8,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  primaryText: {
-    color: "#FFFFFF",
-  },
-  secondaryText: {
-    color: "#333333",
   },
   disabledText: {
     color: "#999999",

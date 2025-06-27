@@ -32,22 +32,22 @@ class User(AbstractUser):
         ("offline", "Offline"),
         ("delivering", "Delivering"),
     ]
-    USER_TYPE_CHOICES = [
-        ("rider", "Rider"),
-        ("customer", "Customer"),
-        ("admin", "Admin"),
-    ]
+    first_name = models.CharField(max_length=40, blank=True, null=True)
+    last_name = models.CharField(max_length=40, blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True, unique=True)
     dob = models.DateField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    city = models.CharField(max_length=20, blank=True, null=True)
+    postal_code = models.CharField(max_length=12, blank=True, null=True)
+    country = models.CharField(max_length=30, blank=True, null=True, default="United Kingdom")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     rating = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
-    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES, default="customer")
-    current_location_lat = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    current_location_lng = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="offline")
     total_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_deliveries = models.IntegerField(default=0)
@@ -55,7 +55,7 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
 
     def __str__(self):

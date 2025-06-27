@@ -3,52 +3,29 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-import { useEffect, useState } from "react";
-import { Appearance } from "react-native";
-
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    headerText: "#0e9ee6",
-    otherText: "gray",
-    text: "#11181C",
     background: "#fff",
-    tint: tintColorLight,
-    icon: "#21130d",
-    primaryColor: "#0e9ee6",
-    secondaryColor: "#570ee6",
-    tabIconDefault: "#687076",
-    tabIconSelected: tintColorLight,
-    activebtn: "#0e9ee6",
-    inactivebtn: "#687076",
-    whiteBackground: "#f2f0f7",
-    highlight: "#d00e57",
-    innerBackground: "#063970",
-    textinput: "#fdfef6",
-    headertext: "#69235f",
-    white: "#FDF5E6.",
+    text: "#000",
+    buttons: "#2D5BFF",
+    secondaryButtons: "#E3F2FD",
+    cards: "#F5F5F5",
+    borders: "#E0E0E0",
+    tint: "#B399D4 ",
+    highlight: "#E76F51",
   },
   dark: {
-    headerText: "#0e9ee6",
-    otherText: "gray",
-    text: "white",
-    background: "black",
-    tint: tintColorDark,
-    primaryColor: "#1e88e5",
-    secondaryColor: "#184ec2",
-    icon: "#21130d",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
-    activebtn: "#0e9ee6",
-    inactivebtn: "#323385",
-    whiteBackground: "#f2f0f7",
-    highlight: "#d00e57",
-    innerBackground: "#063970",
-    textinput: "#fdfef6",
-    headertext: "#69235f",
-    white: "#FDF5E6",
+    background: "#000",
+    text: "#fff",
+    buttons: "#4A90E2",
+    secondaryButtons: "#2D2D2D",
+    cards: "#1E1E1E",
+    borders: "#0A1F3A",
+    tint: "#9B8AA8",
+    highlight: "#FF8C69",
   },
 };
 

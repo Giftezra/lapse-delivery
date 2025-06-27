@@ -2,6 +2,7 @@ import React from "react";
 import { StyleProp, TextStyle, TextProps } from "react-native";
 import { Text } from "react-native-paper";
 import { VariantProp } from "react-native-paper/lib/typescript/components/Typography/types";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface StyledTextProps extends Omit<TextProps, "style"> {
   variant?:
@@ -30,9 +31,12 @@ const StyledText: React.FC<StyledTextProps> = ({
   style,
   ...props
 }) => {
+  const textColor = useThemeColor({}, "text");
   const getTextStyle = (): StyleProp<TextStyle> => {
     const baseStyle: TextStyle = {
-      color: "#000",
+      color: textColor,
+      fontFamily: "RobotoMedium",
+      fontWeight: "700",
     };
     return baseStyle;
   };

@@ -1,11 +1,13 @@
 import { View, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import IdentityInfoForm from "@/app/components/onboarding/IdentityInfoForm";
-import { useOnboarding } from "@/app/contexts/OnboardingContext";
 import { router } from "expo-router";
 import { IdentityInfoInterface } from "@/app/interfaces/onboarding/OnboardingInterfaces";
 import StyledText from "@/app/components/helpers/others/StyledText";
 import StyledButton from "@/app/components/helpers/buttons/StyledButton";
+import { useAppDispatch, useAppSelector } from "@/app/store/store";
+import { markStepAsCompleted } from "@/app/store/slices/OnboardingSlice";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 /**
  * IdentityVerificationScreen Component
@@ -15,33 +17,37 @@ import StyledButton from "@/app/components/helpers/buttons/StyledButton";
  * 2. Upload document photos and take a selfie (Step 2)
  */
 const IdentityVerificationScreen = () => {
+  const dispatch = useAppDispatch();
+  const { identityInfo } = useAppSelector((state) => state.onboarding);
+
+  // Import the colors themes
+  const backgroundColor = useThemeColor({}, "background");
   // Context and state management
-  const { completeStep, setDocument } = useOnboarding();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<IdentityInfoInterface | null>(null);
 
   /**
    * Handles the form submission for each step
    * Step 1: Stores the form data and moves to next step
    * Step 2: Completes the verification process
    */
-  const handleSubmit = (data: IdentityInfoInterface) => {
+  const handleSubmit = (data?: IdentityInfoInterface) => {
     if (currentStep === 1) {
-      setFormData(data);
+      // Step 1: ID type selection - automatically proceed to step 2
       setCurrentStep(2);
     } else {
-      // Process document uploads
-      if (data.frontImage) {
-        setDocument("idFront", { uri: data.frontImage, type: "image" });
+      // Step 2: Document uploads - mark as completed and navigate back
+      if (
+        identityInfo?.frontImage &&
+        identityInfo?.backImage &&
+        identityInfo?.selfieImage
+      ) {
+        dispatch(
+          markStepAsCompleted({
+            step: "/main/onboard/IdentityVerificationScreen",
+          })
+        );
+        router.back();
       }
-      if (data.backImage) {
-        setDocument("idBack", { uri: data.backImage, type: "image" });
-      }
-      if (data.selfieImage) {
-        setDocument("selfie", { uri: data.selfieImage, type: "image" });
-      }
-      completeStep("/main/onboard/IdentityVerificationScreen");
-      router.back();
     }
   };
 
@@ -58,7 +64,7 @@ const IdentityVerificationScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       {/* Header Section */}
       <View style={styles.header}>
         <StyledText style={styles.title}>
@@ -83,7 +89,7 @@ const IdentityVerificationScreen = () => {
         <IdentityInfoForm
           onSubmit={handleSubmit}
           currentStep={currentStep}
-          initialData={formData || undefined}
+          initialData={identityInfo || undefined}
         />
       </View>
 
@@ -91,19 +97,33 @@ const IdentityVerificationScreen = () => {
         <View style={styles.buttonContainer}>
           <StyledButton
             title="Back"
-            variant="secondary"
             onPress={handleBack}
-            style={[styles.button, styles.backButton]}
+            style={[styles.button]}
           />
           <StyledButton
             title={currentStep === 1 ? "Next" : "Submit"}
-            variant="primary"
             onPress={() => {
-              if (formData) {
-                handleSubmit(formData);
+              if (currentStep === 1 && identityInfo?.idType) {
+                handleSubmit();
+              } else if (
+                currentStep === 2 &&
+                identityInfo?.frontImage &&
+                identityInfo?.backImage &&
+                identityInfo?.selfieImage
+              ) {
+                handleSubmit();
               }
             }}
-            style={[styles.button, styles.nextButton]}
+            style={[styles.button]}
+            disabled={
+              currentStep === 1
+                ? !identityInfo?.idType
+                : !(
+                    identityInfo?.frontImage &&
+                    identityInfo?.backImage &&
+                    identityInfo?.selfieImage
+                  )
+            }
           />
         </View>
       </View>
@@ -167,13 +187,5 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    height: 48,
-    borderRadius: 12,
-  },
-  backButton: {
-    backgroundColor: "#FFFFFF",
-  },
-  nextButton: {
-    backgroundColor: "#4169E1",
   },
 });

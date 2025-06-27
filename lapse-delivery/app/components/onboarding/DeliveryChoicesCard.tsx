@@ -8,9 +8,11 @@ import {
   Dimensions,
 } from "react-native";
 import React from "react";
-import { DeliveryOptionsChoicesInterface } from "@/app/interfaces/Onboarding";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { DeliveryOptionsChoicesInterface } from "@/app/interfaces/onboarding/OnboardingInterfaces";
 import StyledText from "@/app/components/helpers/others/StyledText";
+import { LinearGradient } from "expo-linear-gradient";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const { width } = Dimensions.get("window");
 
@@ -24,6 +26,8 @@ const DeliveryChoicesCard = ({
   onPress,
   selected,
 }: DeliveryOptionsChoicesInterface) => {
+  const cardColor = useThemeColor({}, "cards");
+
   const handlePress = (event: GestureResponderEvent) => {
     if (onPress) {
       onPress(event);
@@ -32,9 +36,9 @@ const DeliveryChoicesCard = ({
 
   const getVehicleIcon = () => {
     switch (vehicle) {
-      case "Bike":
+      case "bicycle":
         return "bike";
-      case "Car":
+      case "car":
         return "car";
       default:
         return "motorbike";
@@ -43,151 +47,316 @@ const DeliveryChoicesCard = ({
 
   const getThemeColors = () => {
     switch (vehicle) {
-      case "Bike":
+      case "bicycle":
         return {
-          primary: selected ? "#0D7A3E" : "#FFFFFF",
-          secondary: "#E8F5ED",
-          accent: "#15B65D",
+          primary: selected ? "#10B981" : "#FFFFFF",
+          secondary: "#ECFDF5",
+          accent: "#059669",
+          gradient: selected ? (["#10B981", cardColor] as const) : undefined,
         };
-      case "Car":
+      case "car":
         return {
-          primary: selected ? "#1E40AF" : "#FFFFFF",
-          secondary: "#EEF2FF",
-          accent: "#3B82F6",
+          primary: selected ? "#3B82F6" : "#FFFFFF",
+          secondary: "#EFF6FF",
+          accent: "#2563EB",
+          gradient: selected ? (["#3B82F6", cardColor] as const) : undefined,
         };
       default:
         return {
-          primary: selected ? "#7E22CE" : "#FFFFFF",
-          secondary: "#F5F3FF",
-          accent: "#A855F7",
+          primary: selected ? "#8B5CF6" : "#FFFFFF",
+          secondary: "#F3F4F6",
+          accent: "#7C3AED",
+          gradient: selected ? (["#8B5CF6", cardColor] as const) : undefined,
         };
     }
   };
 
   const colors = getThemeColors();
-  const textColor = selected ? "#FFFFFF" : "#1F2937";
-  const subtextColor = selected ? "#E5E7EB" : "#6B7280";
 
   return (
     <TouchableOpacity
       onPress={handlePress}
       style={styles.cardWrapper}
-      activeOpacity={0.95}
+      activeOpacity={0.8}
     >
-      <View
-        style={[
-          styles.mainContainer,
-          { backgroundColor: colors.primary },
-          selected && styles.selectedContainer,
-        ]}
-      >
-        <View style={styles.headerSection}>
-          <View
-            style={[
-              styles.iconCircle,
-              {
-                backgroundColor: selected
-                  ? "rgba(255,255,255,0.15)"
-                  : colors.secondary,
-              },
-            ]}
-          >
-            <MaterialCommunityIcons
-              name={getVehicleIcon()}
-              size={28}
-              color={selected ? "#FFFFFF" : colors.accent}
-            />
-          </View>
-          <View style={styles.titleSection}>
-            <StyledText
-              variant="labelMedium"
-              style={[styles.title, { color: textColor }]}
+      {selected ? (
+        <LinearGradient
+          colors={colors.gradient!}
+          style={[styles.mainContainer, styles.selectedContainer]}
+          start={{ x: 2, y: 2 }}
+          end={{ x: 1, y: 3 }}
+        >
+          <View style={styles.headerSection}>
+            <View
+              style={[
+                styles.iconCircle,
+                {
+                  backgroundColor: "rgba(255,255,255,0.2)",
+                },
+              ]}
             >
-              {title}
-            </StyledText>
-            <View style={styles.badgeContainer}>
-              <View
-                style={[
-                  styles.badge,
-                  {
-                    backgroundColor: selected
-                      ? "rgba(255,255,255,0.15)"
-                      : colors.secondary,
-                  },
-                ]}
-              >
-                <MaterialCommunityIcons
-                  name="clock-time-four"
-                  size={14}
-                  color={selected ? "#FFFFFF" : colors.accent}
-                />
-                <Text
+              <MaterialCommunityIcons
+                name={getVehicleIcon()}
+                size={32}
+                color="#FFFFFF"
+              />
+            </View>
+            <View style={styles.titleSection}>
+              <StyledText
+                variant="labelLarge"
+                style={[styles.title, { color: "#FFFFFF" }]}
+                children={title}
+              />
+              <View style={styles.badgeContainer}>
+                <View
                   style={[
-                    styles.badgeText,
-                    { color: selected ? "#FFFFFF" : colors.accent },
+                    styles.badge,
+                    {
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                    },
                   ]}
                 >
-                  Start Today
-                </Text>
+                  <MaterialCommunityIcons
+                    name="lightning-bolt"
+                    size={14}
+                    color="#FFFFFF"
+                  />
+                  <StyledText
+                    style={[styles.badgeText, { color: "#FFFFFF" }]}
+                    children="Start Today"
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.detailsSection}>
-          <View style={styles.detailRow}>
-            <View style={styles.detail}>
+          <View style={styles.detailsSection}>
+            <View style={styles.detailRow}>
+              <View style={styles.detail}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    { backgroundColor: "rgba(255,255,255,0.1)" },
+                  ]}
+                >
+                  <MaterialCommunityIcons
+                    name="account"
+                    size={16}
+                    color="#FFFFFF"
+                  />
+                </View>
+                <StyledText
+                  style={[styles.detailText, { color: "#E5E7EB" }]}
+                  children={`${age}+ years`}
+                />
+              </View>
+              {vehicle !== "bicycle" && description && (
+                <View style={styles.detail}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: "rgba(255,255,255,0.1)" },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="shield-check"
+                      size={16}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                  <StyledText
+                    style={[styles.detailText, { color: "#E5E7EB" }]}
+                    children="Insurance Required"
+                  />
+                </View>
+              )}
+            </View>
+
+            <View style={styles.detailRow}>
+              {license && (
+                <View style={styles.detail}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: "rgba(255,255,255,0.1)" },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="card-account-details"
+                      size={16}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                  <StyledText
+                    style={[styles.detailText, { color: "#E5E7EB" }]}
+                    children="License Required"
+                  />
+                </View>
+              )}
+              {expierience && (
+                <View style={styles.detail}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: "rgba(255,255,255,0.1)" },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="star"
+                      size={16}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                  <StyledText
+                    style={[styles.detailText, { color: "#E5E7EB" }]}
+                    children={`${expierience} exp.`}
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+
+          <View style={styles.selectedIndicator}>
+            <MaterialCommunityIcons
+              name="check-circle"
+              size={24}
+              color="#FFFFFF"
+            />
+          </View>
+        </LinearGradient>
+      ) : (
+        <View style={[styles.mainContainer, { backgroundColor: cardColor }]}>
+          <View style={styles.headerSection}>
+            <View
+              style={[
+                styles.iconCircle,
+                {
+                  backgroundColor: colors.secondary,
+                },
+              ]}
+            >
               <MaterialCommunityIcons
-                name="account"
-                size={16}
-                color={subtextColor}
+                name={getVehicleIcon()}
+                size={32}
+                color={colors.accent}
               />
-              <Text style={[styles.detailText, { color: subtextColor }]}>
-                {age}+ years
-              </Text>
             </View>
-            {vehicle !== "Bike" && description && (
-              <View style={styles.detail}>
-                <MaterialCommunityIcons
-                  name="shield-check"
-                  size={16}
-                  color={subtextColor}
-                />
-                <Text style={[styles.detailText, { color: subtextColor }]}>
-                  Insurance Required
-                </Text>
+            <View style={styles.titleSection}>
+              <StyledText
+                variant="labelLarge"
+                style={[styles.title, { color: "#1F2937" }]}
+                children={title}
+              />
+              <View style={styles.badgeContainer}>
+                <View
+                  style={[
+                    styles.badge,
+                    {
+                      backgroundColor: colors.secondary,
+                    },
+                  ]}
+                >
+                  <MaterialCommunityIcons
+                    name="lightning-bolt"
+                    size={14}
+                    color={colors.accent}
+                  />
+                  <StyledText
+                    style={[styles.badgeText, { color: colors.accent }]}
+                    children="Start Today"
+                  />
+                </View>
               </View>
-            )}
+            </View>
           </View>
 
-          <View style={styles.detailRow}>
-            {license && (
+          <View style={styles.detailsSection}>
+            <View style={styles.detailRow}>
               <View style={styles.detail}>
-                <MaterialCommunityIcons
-                  name="license"
-                  size={16}
-                  color={subtextColor}
+                <View
+                  style={[
+                    styles.iconContainer,
+                    { backgroundColor: colors.secondary },
+                  ]}
+                >
+                  <MaterialCommunityIcons
+                    name="account"
+                    size={16}
+                    color={colors.accent}
+                  />
+                </View>
+                <StyledText
+                  style={[styles.detailText, { color: "#6B7280" }]}
+                  children={`${age}+ years`}
                 />
-                <Text style={[styles.detailText, { color: subtextColor }]}>
-                  License Required
-                </Text>
               </View>
-            )}
-            {expierience && (
-              <View style={styles.detail}>
-                <MaterialCommunityIcons
-                  name="star"
-                  size={16}
-                  color={subtextColor}
-                />
-                <Text style={[styles.detailText, { color: subtextColor }]}>
-                  {expierience} exp.
-                </Text>
-              </View>
-            )}
+              {vehicle !== "bicycle" && description && (
+                <View style={styles.detail}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: colors.secondary },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="shield-check"
+                      size={16}
+                      color={colors.accent}
+                    />
+                  </View>
+                  <StyledText
+                    style={[styles.detailText, { color: "#6B7280" }]}
+                    children="Insurance Required"
+                  />
+                </View>
+              )}
+            </View>
+
+            <View style={styles.detailRow}>
+              {license && (
+                <View style={styles.detail}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: colors.secondary },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="card-account-details"
+                      size={16}
+                      color={colors.accent}
+                    />
+                  </View>
+                  <StyledText
+                    style={[styles.detailText, { color: "#6B7280" }]}
+                    children="License Required"
+                  />
+                </View>
+              )}
+              {expierience && (
+                <View style={styles.detail}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: colors.secondary },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="star"
+                      size={16}
+                      color={colors.accent}
+                    />
+                  </View>
+                  <StyledText
+                    style={[styles.detailText, { color: "#6B7280" }]}
+                    children={`${expierience} exp.`}
+                  />
+                </View>
+              )}
+            </View>
           </View>
         </View>
-      </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -196,51 +365,53 @@ export default DeliveryChoicesCard;
 
 const styles = StyleSheet.create({
   cardWrapper: {
+    marginHorizontal: 16,
+    marginVertical: 5,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: {
           width: 0,
-          height: 4,
+          height: 8,
         },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
+        shadowOpacity: 0.12,
+        shadowRadius: 16,
       },
       android: {
-        elevation: 5,
+        elevation: 8,
       },
     }),
   },
   mainContainer: {
-    flex:1,
     padding: 10,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E5E5E5",
-    borderRadius: 5,
+    borderColor: "#F3F4F6",
+    position: "relative",
   },
   selectedContainer: {
-    borderWidth: 0,
+    borderColor: "rgba(255,255,255,0.3)",
   },
   headerSection: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   iconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 16,
+    marginRight: 20,
   },
   titleSection: {
     flex: 1,
   },
   title: {
-    fontSize: 20,
     fontWeight: "700",
-    marginBottom: 8,
+    marginBottom: 12,
+    lineHeight: 20,
   },
   badgeContainer: {
     flexDirection: "row",
@@ -250,30 +421,42 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 6,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
   },
   detailsSection: {
-    gap: 12,
+    gap: 16,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    gap: 24,
+    gap: 32,
   },
   detail: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 10,
+  },
+  iconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
   detailText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "500",
+  },
+  selectedIndicator: {
+    position: "absolute",
+    top: 16,
+    right: 16,
   },
 });
