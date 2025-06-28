@@ -85,12 +85,13 @@ export default function Index() {
         <View style={styles.benefitsGrid}>
           {benefits.map((benefit, index) => (
             <LinearGradient
+              key={index}
               colors={[buttonColors, cardColors]}
               style={styles.benefitCard}
               start={{ x: 2, y: 4 }}
               end={{ x: 1, y: 1 }}
             >
-              <View key={index}>
+              <View>
                 <StyledText
                   style={styles.benefitIcon}
                   children={benefit.icon}

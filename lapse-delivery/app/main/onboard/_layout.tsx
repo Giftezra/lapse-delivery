@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StyledText from "@/app/components/helpers/others/StyledText";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { AlertProvider } from "@/app/context/AlertContext";
 
 const MainOnboardLayout = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -12,6 +13,7 @@ const MainOnboardLayout = () => {
   const borderColor = useThemeColor({}, "borders");
 
   return (
+    <AlertProvider>
       <GestureHandlerRootView>
         <View style={[styles.headerContainer, { backgroundColor, borderColor}]}>
           <StyledText variant="titleLarge" children="Lapse" />
@@ -57,6 +59,7 @@ const MainOnboardLayout = () => {
           </Stack>
         </View>
       </GestureHandlerRootView>
+    </AlertProvider>
   );
 };
 

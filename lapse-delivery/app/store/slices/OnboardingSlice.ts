@@ -25,7 +25,22 @@ const onboardingSlice = createSlice({
         step: string;
       }>
     ) => {
-      state.completedSteps.push(action.payload.step);
+      // Don't add empty strings or duplicate entries
+      if (
+        action.payload.step &&
+        !state.completedSteps.includes(action.payload.step)
+      ) {
+        state.completedSteps.push(action.payload.step);
+      }
+    },
+
+    /* Clear the states */
+    clearOnboarding: (state) => {
+      state.personalInfo = null;
+      state.bankInfo = null;
+      state.vehicleInfo = null;
+      state.identityInfo = null;
+      state.completedSteps = [];
     },
 
     /* Manages how the users personal information is collected and stored in the state. */
@@ -57,8 +72,7 @@ const onboardingSlice = createSlice({
           email: "",
           address: "",
           city: "",
-          state: "",
-          zipCode: "",
+          postal_code: "",
           country: "",
           [action.payload.field]: action.payload.value,
         } as PersonalInfoInterface;
@@ -215,5 +229,6 @@ export const {
   identityInfo,
   updateIdentityInfo,
   markStepAsCompleted,
+  clearOnboarding,
 } = onboardingSlice.actions;
 export default onboardingSlice.reducer;

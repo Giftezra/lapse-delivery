@@ -7,9 +7,9 @@ export const onboardingApi = createApi({
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
     
-    onboardRider: builder.mutation<OnboardingState, OnboardingState>({
+    onboardRider: builder.mutation({
       query: (credentials) => ({
-        url: "/onboarding",
+        url: "api/v1/delivery/onboarding/",
         method: "POST",
         body: credentials,
       }),
@@ -18,3 +18,4 @@ export const onboardingApi = createApi({
 });
 
 export const { useOnboardRiderMutation } = onboardingApi;
+export default onboardingApi;

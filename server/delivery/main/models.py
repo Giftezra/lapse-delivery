@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from decimal import Decimal
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.core.validators import FileExtensionValidator
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -34,6 +34,7 @@ class User(AbstractUser):
     ]
     first_name = models.CharField(max_length=40, blank=True, null=True)
     last_name = models.CharField(max_length=40, blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
     phone = models.CharField(max_length=15, blank=True, null=True, unique=True)
     dob = models.DateField(blank=True, null=True)
@@ -74,12 +75,6 @@ class Order(models.Model):
         ("delivered", "Delivered"),
         ("cancelled", "Cancelled"),
     ]
-    PAYMENT_STATUS = [
-        ("pending", "Pending"),
-        ("completed", "Completed"),
-        ("failed", "Failed"),
-        ("refunded", "Refunded"),
-    ]
     buyer = models.IntegerField(null=True)  # ID from main app
     buyer_phone = models.CharField(max_length=15, blank=True, null=True)  # Phone from main app
     buyer_name = models.CharField(max_length=100, blank=True, null=True)  # Name from main app
@@ -93,11 +88,7 @@ class Order(models.Model):
     delivery_time = models.DateTimeField(blank=True, null=True)
     estimated_delivery_time = models.DateTimeField(blank=True, null=True)
     instruction = models.TextField(blank=True, null=True)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     delivery_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    service_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default="pending")
     distance = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # in kilometers
     estimated_preparation_time = models.IntegerField(default=0)  # in minutes
     is_priority = models.BooleanField(default=False)
@@ -107,6 +98,41 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.order_id} - {self.status}"
+    
+    # Get the oder pick up location using a reverse relationship
+    # Between the order and the pickup location model to get the orders pickuplocation
+    @property
+    def pickup_location(self):
+        return self.order_pickup_locations.first()
+    
+    # Get the oder delivery location using a reverse relationship
+    # Between the order and the delivery location model to get the orders deliverylocation
+    @property
+    def delivery_location(self):
+        return self.order_delivery_locations.first()
+    
+    # Get the delivery location using a reverse relationship
+    # Between the order and the delivery location model to get the orders deliverylocation
+    @property
+    def delivery_location(self):
+        return self.order_delivery_locations.first()
+    
+    
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
+    item_name = models.CharField(max_length=100)  # Increased length
+    quantity = models.IntegerField(default=1)
+    main_app_item_id = models.IntegerField()  # ID from main app
+    special_instructions = models.TextField(blank=True, null=True)
+    is_temperature_sensitive = models.BooleanField(default=False)
+    requires_separate_bag = models.BooleanField(default=False)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.order.order_id} - {self.item_name} - {self.quantity}"
+    
 
 class DeliverySession(models.Model):
     rider = models.ForeignKey(User, on_delete=models.CASCADE, related_name='delivery_sessions')
@@ -127,9 +153,7 @@ class Earnings(models.Model):
         ("bonus", "Bonus"),
         ("incentive", "Incentive"),
     ]
-    rider = models.ForeignKey(User, on_delete=models.CASCADE, related_name='earnings')
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, related_name='earnings')
-    session = models.ForeignKey(DeliverySession, on_delete=models.CASCADE, related_name='session_earnings')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     earning_type = models.CharField(max_length=20, choices=EARNING_TYPE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -175,24 +199,20 @@ class Vehicle(models.Model):
         ("car", "Car"),
         ("motorcycle", "Motorcycle"),
         ("bicycle", "Bicycle"),
-        ("scooter", "Scooter"),
-    ]
-    VEHICLE_STATUS = [
-        ("active", "Active"),
-        ("maintenance", "Maintenance"),
-        ("inactive", "Inactive"),
-    ]
+    ]#
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_vehicles")
     vehicle_type = models.CharField(max_length=20, choices=VEHICLE_TYPE_CHOICES)
     registration_number = models.CharField(max_length=20, blank=True, null=True)
     make = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     year = models.IntegerField()
-    color = models.CharField(max_length=20)
     insurance_number = models.CharField(max_length=50, blank=True, null=True)
-    insurance_expiry = models.DateField(blank=True, null=True)
-    status = models.CharField(max_length=20, choices=VEHICLE_STATUS, default="active")
-    is_verified = models.BooleanField(default=False)
+    insurance_provider = models.CharField(max_length=50, blank=True, null=True)
+    insurance_expiry_date = models.DateField(blank=True, null=True)
+    is_road_worthy = models.BooleanField(default=False)
+    last_inspection_date = models.DateField(blank=True, null=True)
+    next_inspection_date = models.DateField(blank=True, null=True)
+    mot_documents = models.FileField(upload_to='mot_documents/', blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['pdf', 'jpg', 'jpeg', 'png'])])
 
     def __str__(self):
         return f"{self.user.email} - {self.vehicle_type} - {self.registration_number}"
@@ -240,24 +260,7 @@ class DeliveryLocation(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, default=None)#
 
     def __str__(self):
-        return f"{self.order.order_id} - {self.address} - {self.city} - {self.postal_code} - {self.country} - {self.latitude} - {self.longitude}"
-    
-
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
-    item_name = models.CharField(max_length=100)  # Increased length
-    quantity = models.IntegerField(default=1)
-    main_app_item_id = models.IntegerField()  # ID from main app
-    special_instructions = models.TextField(blank=True, null=True)
-    is_temperature_sensitive = models.BooleanField(default=False)
-    requires_separate_bag = models.BooleanField(default=False)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"{self.order.order_id} - {self.item_name} - {self.quantity}"
-    
+        return f"{self.order.order_id} - {self.address} - {self.city} - {self.postal_code} - {self.country} - {self.latitude} - {self.longitude}"    
     
 class Device(models.Model):
     DEVICE_TYPE_CHOICES = [
@@ -269,6 +272,8 @@ class Device(models.Model):
     device_type = models.CharField(max_length=20, choices=DEVICE_TYPE_CHOICES)
     device_token = models.CharField(max_length=20, blank=True, null=True)
     device_model = models.CharField(max_length=20, blank=True, null=True)
+    device_os = models.CharField(max_length=20, blank=True, null=True)
+    device_name = models.CharField(max_length=20, blank=True, null=True)
     is_current = models.BooleanField(default=False)
     last_login = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -277,34 +282,35 @@ class Device(models.Model):
         return f"{self.device_id} - {self.device_type} - {self.is_current}"
     
 
-    
-
-class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_addresses")
-    address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=20, blank=True, null=True)
-    postal_code = models.CharField(max_length=20, blank=True, null=True)
-    country = models.CharField(max_length=20, blank=True, null=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.address}, {self.city}, {self.postal_code}, {self.country}"
-    
-
 class BankAccount(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bank_accounts")
     bank_name = models.CharField(max_length=20, blank=True, null=True)
     account_number = models.CharField(max_length=20, blank=True, null=True)
-    account_name = models.CharField(max_length=20, blank=True, null=True)
-    account_type = models.CharField(max_length=20, blank=True, null=True)
+    account_holder_name = models.CharField(max_length=20, blank=True, null=True)
     iban = models.CharField(max_length=20, blank=True, null=True)
     bic = models.CharField(max_length=20, blank=True, null=True)
-    swift_code = models.CharField(max_length=20, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.bank_name}, {self.account_number}, {self.account_name}, {self.account_type}, {self.account_holder_name}, {self.iban}, {self.bic}, {self.swift_code}"
+    
+class IdentityInformation(models.Model):
+    ID_TYPE_CHOICES = [
+        ("driver_license", "Driver License"),
+        ("passport", "Passport"),
+        ("government_id", "Government ID"),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_identity_information")
+    id_type = models.CharField(max_length=20, choices=ID_TYPE_CHOICES, blank=True, default=None)
+    id_number = models.CharField(max_length=20, blank=True, null=True)
+    expiry_date = models.DateField(blank=True, null=True)
+    front_image = models.ImageField(upload_to='identity_information/front/', blank=True, null=True)
+    back_image = models.ImageField(upload_to='identity_information/back/', blank=True, null=True)
+    selfie_image = models.ImageField(upload_to='identity_information/selfie/', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.id_type} - {self.id_number}"
+
 
 
 # Create your models here.

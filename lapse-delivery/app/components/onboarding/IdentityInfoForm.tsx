@@ -37,8 +37,6 @@ const IdentityInfoForm = ({
     idType: "driverLicense" | "passport" | "governmentID"
   ) => {
     dispatch(updateIdentityInfo({ field: "idType", value: idType }));
-    // Mark step 1 as completed
-    dispatch(markStepAsCompleted({ step: '' }));
     // Automatically proceed to step 2
     setTimeout(() => {
       onSubmit(

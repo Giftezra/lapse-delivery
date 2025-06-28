@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable } from "react-native";
 import React from "react";
 import { PersonalInfoInterface } from "@/app/interfaces/onboarding/OnboardingInterfaces";
 import StyledText from "../helpers/others/StyledText";
@@ -22,6 +22,9 @@ interface PersonalInfoFormProps {
     }>
   >;
 }
+
+/* Create a group of gender options to select from */
+const genderOptions = ["Male", "Female", "Other"];
 
 const PersonalInfoForm = ({
   currentStep,
@@ -66,35 +69,38 @@ const PersonalInfoForm = ({
         [part]: newValue,
       };
 
-      // Only update personalInfo if we have all three parts
-      if (
-        updatedDobParts.day &&
-        updatedDobParts.month &&
-        updatedDobParts.year
-      ) {
-        const day = parseInt(updatedDobParts.day);
-        const month = parseInt(updatedDobParts.month);
-        const year = parseInt(updatedDobParts.year);
-
-        if (
-          day >= 1 &&
-          day <= 31 &&
-          month >= 1 &&
-          month <= 12 &&
-          year >= 1900 &&
-          year <= new Date().getFullYear()
-        ) {
-          const formattedDate = `${year}-${month
-            .toString()
-            .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
-          dispatch(
-            updatePersonalInfo({ field: "dob", value: formattedDate })
-          );
-        }
-      }
-
       return updatedDobParts;
     });
+
+    // Check if we have all three parts and update personalInfo separately
+    const updatedDobParts = {
+      ...dobParts,
+      [part]: newValue,
+    };
+
+    if (updatedDobParts.day && updatedDobParts.month && updatedDobParts.year) {
+      const day = parseInt(updatedDobParts.day);
+      const month = parseInt(updatedDobParts.month);
+      const year = parseInt(updatedDobParts.year);
+
+      if (
+        day >= 1 &&
+        day <= 31 &&
+        month >= 1 &&
+        month <= 12 &&
+        year >= 1900 &&
+        year <= new Date().getFullYear()
+      ) {
+        const formattedDate = `${year}-${month
+          .toString()
+          .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+
+        // Use setTimeout to defer the dispatch to the next tick
+        setTimeout(() => {
+          dispatch(updatePersonalInfo({ field: "dob", value: formattedDate }));
+        }, 0);
+      }
+    }
   };
 
   /**
@@ -203,6 +209,33 @@ const PersonalInfoForm = ({
           error={errors.email}
         />
       </View>
+
+      <View style={styles.formGroup}>
+        <StyledText variant="titleMedium" style={styles.label}>
+          Gender
+        </StyledText>
+        <View style={styles.genderContainer}>
+          {genderOptions.map((option) => (
+            <Pressable
+              key={option}
+              style={[
+                styles.genderOption,
+                personalInfo?.gender === option && styles.genderOptionSelected,
+                personalInfo?.gender === undefined &&
+                  styles.genderOptionSelected,
+              ]}
+              onPress={() =>
+                dispatch(updatePersonalInfo({ field: "gender", value: option }))
+              }
+            >
+              <StyledText>{option}</StyledText>
+            </Pressable>
+          ))}
+        </View>
+        {errors.gender && (
+          <StyledText style={styles.errorText}>{errors.gender}</StyledText>
+        )}
+      </View>
     </ScrollView>
   );
 
@@ -247,6 +280,7 @@ const PersonalInfoForm = ({
           error={errors.postal_code}
           placeholder="Enter your postal code"
           placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          maxLength={8}
         />
       </View>
 
@@ -312,5 +346,24 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.7)",
     fontSize: 12,
     marginTop: 4,
+  },
+  genderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  genderOption: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  genderOptionSelected: {
+    borderColor: "#FFFFFF",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 });

@@ -5,10 +5,12 @@ export interface PersonalInfoInterface {
   dob?: string;
   phoneNumber?: string;
   email?: string;
+  gender?: string;
   address?: string;
   city?: string;
   postal_code?: string;
   country?: string;
+  password?: string;
 }
 
 export interface BankInfoInterface {

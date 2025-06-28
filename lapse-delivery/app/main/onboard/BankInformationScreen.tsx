@@ -17,6 +17,15 @@ const BankInformationScreen = () => {
     (state) => state.onboarding
   );
 
+  /* Automatically update the bankinfo wuth the users first and last name if provided.
+   * This is to ensure that the account holder name is the same as the users first and last name.
+   */
+  React.useEffect(() => {
+    if (personalInfo?.first_name && personalInfo?.last_name) {
+      dispatch(updateBankInfo({ field: "accountHolderName", value: personalInfo?.first_name + " " + personalInfo?.last_name }));
+    }
+  }, [personalInfo?.first_name, personalInfo?.last_name]); 
+
   // Use the color theme
   const backgroundColor = useThemeColor({}, "background");
   const cardColor = useThemeColor({}, "cards");

@@ -5,19 +5,23 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { OnboardingCardInterface } from "@/app/interfaces/onboarding/OnboardingInterfaces";
 import OnboardingCard from "@/app/components/onboarding/OnboardingCard";
 import StyledButton from "@/app/components/helpers/buttons/StyledButton";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import StyledText from "@/app/components/helpers/others/StyledText";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAppSelector } from "@/app/store/store";
+import useOnboarding from "@/app/hook/useOnboarding";
 
 const OnboardingScreen = () => {
-  const { vehicleType } = useLocalSearchParams<{ vehicleType: string }>();
-  const { completedSteps } = useAppSelector((state) => state.onboarding);
+  const { vehicleInfo, completedSteps } = useAppSelector(
+    (state) => state.onboarding
+    );
+    
+  const { handleOnboarding, isOnboarding } = useOnboarding();
 
   /**
    * Manages the displays given the users vehicle types.
@@ -47,7 +51,7 @@ const OnboardingScreen = () => {
       },
     ];
 
-    if (vehicleType === "bike") {
+    if (vehicleInfo?.vehicleType === "bicycle") {
       return baseSteps;
     }
 
@@ -62,14 +66,20 @@ const OnboardingScreen = () => {
     ];
   };
 
+  /**
+   * Calculate the completed steps as with the number of steps in the onboarding process.
+   * When the user has completed all the steps, navigate to the password screen.
+   * To enable them finish their onboarding process.
+   */
   const handleContinue = () => {
     const steps = getOnboardingSteps();
     if (completedSteps.length === steps.length) {
-      // All steps completed, proceed to final submission
-      router.push("/main/onboard/submit" as any);
+      router.push("/main/onboard/PasswordScreen");
     } else {
       // Find the first incomplete step and navigate to it
-      const nextStep = steps.find((step) => !completedSteps.includes(step.route));
+      const nextStep = steps.find(
+        (step) => !completedSteps.includes(step.route)
+      );
       if (nextStep) {
         router.push(nextStep.route as any);
       }
@@ -79,6 +89,9 @@ const OnboardingScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
   const cardColor = useThemeColor({}, "cards");
   const buttonColor = useThemeColor({}, "buttons");
+
+  const allStepsCompleted =
+    completedSteps.length === getOnboardingSteps().length;
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -102,7 +115,11 @@ const OnboardingScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         {getOnboardingSteps().map((step, index) => (
-          <OnboardingCard key={index} {...step} completed={completedSteps.includes(step.route)}/>
+          <OnboardingCard
+            key={index}
+            {...step}
+            completed={completedSteps.includes(step.route)}
+          />
         ))}
       </ScrollView>
 
@@ -122,8 +139,10 @@ const OnboardingScreen = () => {
           >
             <StyledText
               children={
-                completedSteps.length === getOnboardingSteps().length
-                  ? "Submit Application"
+                isOnboarding
+                  ? "Onboarding..."
+                  : allStepsCompleted
+                  ? "Complete"
                   : "Continue"
               }
             />

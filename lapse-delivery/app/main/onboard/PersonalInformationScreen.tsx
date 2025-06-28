@@ -95,31 +95,20 @@ const PersonalInformationScreen = () => {
     const newErrors: Partial<Record<keyof PersonalInfoInterface, string>> = {};
 
     if (!personalInfo?.first_name?.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.first_name = "First name is required";
     }
     if (!personalInfo?.last_name?.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.last_name = "Last name is required";
     }
-    if (!dobParts.day || !dobParts.month || !dobParts.year) {
-      newErrors.dateOfBirth = "Complete date of birth is required";
+    if (!personalInfo?.gender?.trim()) {
+      newErrors.gender = "Gender is required";
+    }
+    if (!personalInfo?.dob?.trim()) {
+      newErrors.dob = "Date of birth is required";
     } else {
-      const day = parseInt(dobParts.day);
-      const month = parseInt(dobParts.month);
-      const year = parseInt(dobParts.year);
-
-      if (day < 1 || day > 31) {
-        newErrors.dateOfBirth = "Invalid day (must be 1-31)";
-      }
-      if (month < 1 || month > 12) {
-        newErrors.dateOfBirth = "Invalid month (must be 1-12)";
-      }
-      if (year < 1900 || year > new Date().getFullYear()) {
-        newErrors.dateOfBirth = "Invalid year";
-      }
-
-      // Check if date is valid and user is 18+
-      if (!newErrors.dateOfBirth && !isValidDateAndAge(day, month, year)) {
-        newErrors.dateOfBirth = "You must be at least 18 years old";
+      const [year, month, day] = personalInfo.dob.split("-").map(Number);
+      if (!isValidDateAndAge(day, month, year)) {
+        newErrors.dob = "Invalid date of birth or age must be 18+";
       }
     }
     if (!personalInfo?.phoneNumber?.trim()) {
@@ -144,11 +133,8 @@ const PersonalInformationScreen = () => {
     if (!personalInfo?.city?.trim()) {
       newErrors.city = "City is required";
     }
-    if (!personalInfo?.state?.trim()) {
-      newErrors.state = "State is required";
-    }
-    if (!personalInfo?.zipCode?.trim()) {
-      newErrors.zipCode = "ZIP code is required";
+    if (!personalInfo?.postal_code?.trim()) {
+      newErrors.postal_code = "Postal code is required";
     }
 
     setErrors(newErrors);
@@ -158,14 +144,13 @@ const PersonalInformationScreen = () => {
   const handleSubmit = () => {
     if (currentStep === 1) {
       setCurrentStep(2);
-      if (validateStep2()) {
-        dispatch(
-          markStepAsCompleted({
-            step: "/main/onboard/PersonalInformationScreen",
-          })
-        );
-      }
     } else {
+      // Only mark as completed when actually submitting the form
+      dispatch(
+        markStepAsCompleted({
+          step: "/main/onboard/PersonalInformationScreen",
+        })
+      );
       router.back();
     }
   };
@@ -181,9 +166,6 @@ const PersonalInformationScreen = () => {
   const handleNext = () => {
     if (personalInfo) {
       const isValid = currentStep === 1 ? validateStep1() : validateStep2();
-      dispatch(
-        markStepAsCompleted({ step: "/main/onboard/PersonalInformationScreen" })
-      );
       if (isValid) {
         if (currentStep === 1) {
           // Format date of birth before proceeding
@@ -191,9 +173,7 @@ const PersonalInformationScreen = () => {
             2,
             "0"
           )}-${dobParts.day.padStart(2, "0")}`;
-          dispatch(
-            updatePersonalInfo({ field: "dateOfBirth", value: dateOfBirth })
-          );
+          dispatch(updatePersonalInfo({ field: "dob", value: dateOfBirth }));
           setCurrentStep(2);
         } else {
           handleSubmit();

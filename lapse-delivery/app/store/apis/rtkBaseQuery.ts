@@ -4,7 +4,7 @@ import store from "../store";
 import { logout, refreshTokenSuccess} from "../slices/authSlice";
 
 // Create axios instance for RTK Query
-const baseURL = "https://6d6d-213-233-155-134.ngrok-free.app";
+const baseURL = "https://01ce-188-141-38-228.ngrok-free.app";
 
 const axiosInstance = axios.create({
   baseURL,

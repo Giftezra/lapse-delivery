@@ -42,9 +42,11 @@ const AlertModal = ({
     >
       <View style={styles.overlay}>
         <View style={[styles.modalContainer, { backgroundColor: cardColor }]}>
-          <Text style={[styles.title, { color: getTitleColor() }]}>
-            {title}
-          </Text>
+          <StyledText
+            style={[styles.title, { color: getTitleColor() }]}
+            variant="titleMedium"
+            children={title}
+          />
           <StyledText style={styles.message} children={message} />
 
           {/* Dislplay the button given if the props is passed */}
@@ -55,19 +57,31 @@ const AlertModal = ({
                 style={[styles.button, styles.cancelButton]}
                 onPress={onClose}
               >
-                <StyledText style={{ color: textColor }} children="Cancel" variant='labelMedium' />
+                <StyledText
+                  style={{ color: textColor }}
+                  children="Cancel"
+                  variant="labelMedium"
+                />
               </TouchableOpacity>
             )}
             {/* Display the confirm button if the onConfirm prop is passed */}
             {onConfirm && (
               <TouchableOpacity
-                style={[styles.button, styles.confirmButton, { backgroundColor: buttonColor }]}
+                style={[
+                  styles.button,
+                  styles.confirmButton,
+                  { backgroundColor: buttonColor },
+                ]}
                 onPress={() => {
                   onConfirm?.();
                   onClose?.();
                 }}
               >
-                <StyledText style={{ color: textColor }} children="OK" variant='labelMedium' />
+                <StyledText
+                  style={{ color: textColor }}
+                  children="OK"
+                  variant="labelMedium"
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -94,19 +108,12 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "600",
     marginBottom: 10,
-    fontFamily: "BarlowRegular",
-    letterSpacing: 0.5,
   },
   message: {
-    fontSize: 14,
-    color: "#666",
-    fontFamily: "BarlowLight",
-    fontWeight: "400",
     marginBottom: 20,
-    letterSpacing: 0.3,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
   buttonContainer: {
     flexDirection: "row",
